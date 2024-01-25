@@ -1,0 +1,524 @@
+#!  /bin/bash 
+estimate_quadkeys social/tweets/heap -output database/standard_qkeys
+
+
+############################################################################################
+##### 주요 구역들
+############################################################################################
+mc_dataset import shp $MARMOT_DATA/행자부/법정구역_5179/시도 구역/시도 -srid EPSG:5179 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 구역/시도
+mc_dataset import shp $MARMOT_DATA/행자부/법정구역_5179/시군구 구역/시군구 -srid EPSG:5179 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset euc-kr -f
+mc_spindex create 구역/시군구
+mc_dataset import shp $MARMOT_DATA/행자부/법정구역_5179/읍면동 구역/읍면동 -srid EPSG:5179 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset euc-kr -f
+mc_spindex create 구역/읍면동
+mc_dataset import shp $MARMOT_DATA/행자부/법정구역_5179/리 구역/리 -srid EPSG:5179 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 구역/리
+mc_run_module region.ConcatPoliticals
+##### 연속지적도_2017
+mc_dataset import shp $MARMOT_DATA/공공데이터포털/연속지적도_2017 구역/연속지적도 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spcluster create 구역/연속지적도 -valid_range 구역/시도 -mappers -1 -partitions 7 -b 128mb -v -f
+##### 연속지적도_2017 (사업단)
+mc_dataset import shp $MARMOT_DATA/사업단자료/연속지적도_2017 구역/연속지적도_2017 -charset utf-8 -geom_col 'the_geom(EPSG:5186)' -f
+mc_spcluster create 구역/연속지적도_2017 -valid_range 구역/시도 -sample_size 128mb -cluster_size 64mb -mappers -1	\
+					-partitions 7 -b 64mb -v -f
+mc_dataset thumbnail create 구역/연속지적도_2017 1000000
+##### 행정동코드
+mc_dataset import shp $MARMOT_DATA/사업단자료/행정동코드 구역/행정동코드 -geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_spcluster create 구역/행정동코드 -partitions 1 -v -f
+##### 기초구역
+mc_dataset import shp $MARMOT_DATA/행자부/기초구역_5179 구역/기초구역 -srid EPSG:5179 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 구역/기초구역
+##### 통계청 집계구
+mc_dataset import shp $MARMOT_DATA/사업단자료/통계청집계구 구역/집계구 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spcluster create 구역/집계구 -partitions 1 -f -v
+
+
+############################################################################################
+##### 국가공간정보포털 - 국가중점데이터
+############################################################################################
+##### 연속지적도형정보(국가중점데이터)
+mc_dataset import shp $MARMOT_DATA/국가공간정보포털/연속지적도형정보/2019.07 구역/연속지적도_2019 -srid EPSG:5174 -charset euc-kr	\
+		-geom_col 'the_geom(EPSG:5186)' -c lz4 -f
+mc_spindex create 구역/연속지적도_2019 -workers 31 -v
+mc_dataset thumbnail create 구역/연속지적도_2019 1000000
+##### GIS건물통합정보(국가중점데이터)
+mc_dataset import shp  $MARMOT_DATA/국가공간정보포털/GIS건물통합정보/2019.07 건물/GIS건물통합정보_2019 -srid EPSG:5174 -charset euc-kr	\
+		-geom_col 'the_geom(EPSG:5186)' -c lz4 -f
+mc_spindex create 건물/GIS건물통합정보_2019 -workers 23
+mc_dataset thumbnail create 건물/GIS건물통합정보_2019 500000
+##### 법정구역정보-시군구(국가중점데이터)
+mc_dataset import shp $MARMOT_DATA/국가공간정보포털/법정구역정보/2019.07/SIG 구역/시군구_2019 -srid EPSG:5174 -charset euc-kr	\
+				-geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create 구역/시군구_2019 -workers 1
+##### 법정구역정보-읍면동(국가중점데이터)
+mc_dataset import shp $MARMOT_DATA/국가공간정보포털/법정구역정보/2019.07/EMD 구역/읍면동_2019 -srid EPSG:5174 -charset euc-kr	\
+				-geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create 구역/읍면동_2019 -workers 1
+##### 법정구역정보-리(국가중점데이터)
+mc_dataset import shp $MARMOT_DATA/국가공간정보포털/법정구역정보/2019.07/LIO 구역/리_2019 -srid EPSG:5174 -charset euc-kr	\
+				-geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create 구역/리_2019
+
+
+############################################################################################
+##### 도로명/지번 주소 관련 정보
+############################################################################################
+mc_dataset import csv $MARMOT_DATA/행자부/도로명주소/건물_위치정보 주소/건물POI -delim '|' -header_first	\
+			-point_cols 'xpos|ypos'	-srid EPSG:5179 -geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create -v 주소/건물POI
+#mc_spcluster create 주소/건물POI 주소/건물POI_clustered -sample_size '128mb' -cluster_size '64mb' -f
+mc_dataset thumbnail create 주소/건물POI 500000
+## 새주소건물
+#mc_dataset import shp $MARMOT_DATA/국가공간정보포털/새주소건물 건물/새주소건물 -srid EPSG:5181	\
+#				-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+#dataset cluster create 건물/새주소건물 -workers 11
+
+
+############################################################################################
+##### 토지 관련 정보
+############################################################################################
+##### 표준공시지가
+import_csv $MARMOT_DATA/공공데이터포털/표준공시지가 토지/표준공시지가 -header_first -quote '"' -f
+##### 개별공시지가
+mc_dataset import csv $MARMOT_DATA/공공데이터포털/개별공시지가/2012-2017 토지/개별공시지가 -header_first -charset euc-kr -f
+mc_dataset import shp $MARMOT_DATA/공공데이터포털/개별공시지가/2018 토지/개별공시지가_2018 -charset euc-kr	\
+			-geom_col 'the_geom(EPSG:5186)'	-f
+mc_copy 토지/개별공시지가_2018 토지/개별공시지가 -project '*-{the_geom}' -a
+mc_dataset import shp $MARMOT_DATA/공공데이터포털/개별공시지가/2017 토지/개별공시지가_2017	\
+			-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+##### 용도지역지구
+mc_dataset import shp $MARMOT_DATA/사업단자료/용도지역지구 토지/용도지역지구 -geom_col 'the_geom(EPSG:5186)'	\
+			-charset euc-kr
+mc_spindex create 토지/용도지역지구
+
+
+############################################################################################
+##### 건물/주택 정보
+############################################################################################
+#mc_dataset import shp $MARMOT_DATA/공공데이터포털/건물통합정보 건물/통합정보 -f -geom_col 'the_geom(EPSG:5186)'	\
+#				-charset euc-kr
+#dataset cluster create 건물/통합정보 -workers 17
+# 건물통합정보마스터
+mc_dataset import shp $MARMOT_DATA/국가공간정보포털/건물통합정보마스터/201809 건물/건물통합정보마스터	\
+				-srid EPSG:5174 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 건물/건물통합정보마스터 -workers 11
+mc_dataset thumbnail create 건물/건물통합정보마스터 700000
+
+
+############################################################################################
+##### 주민 관련 정보
+############################################################################################
+##### 성연령별인구
+mc_dataset import shp $MARMOT_DATA/사업단자료_2018/성연령별인구/2000년 주민/성연령별인구/2000년 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset utf-8 -f
+mc_dataset import shp $MARMOT_DATA/사업단자료_2018/성연령별인구/2005년 주민/성연령별인구/2005년 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset utf-8 -f
+mc_dataset import shp $MARMOT_DATA/사업단자료_2018/성연령별인구/2010년 주민/성연령별인구/2010년 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset utf-8 -f
+mc_dataset import shp $MARMOT_DATA/사업단자료_2018/성연령별인구/2015년 주민/성연령별인구/2015년 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset utf-8 -f
+#### 인구밀도_2000 (2015년 기준)
+mc_dataset import shp $MARMOT_DATA/사업단자료/인구밀도_2000 주민/인구밀도_2000 -f -geom_col 'the_geom(EPSG:5186)' -charset utf-8
+mc_spcluster create 주민/인구밀도_2000 -partitions 1 -v -f
+mc_spindex create 주민/인구밀도_2000 -v
+
+
+############################################################################################
+##### 지오비전 데이터
+############################################################################################
+##### 집계구
+mc_dataset import shp $MARMOT_DATA/사업단자료/지오비전/집계구/2015 지오비전/집계구/2015 -srid EPSG:5186 -geom_col 'the_geom(EPSG:5186)' -f
+mc_spcluster create 지오비전/집계구/2015 -partitions 1 -v -f
+mc_spindex create 지오비전/집계구/2015
+mc_dataset import shp $MARMOT_DATA/사업단자료/지오비전/집계구/2018 지오비전/집계구/2018 -srid EPSG:5186 -geom_col 'the_geom(EPSG:5186)'	\
+			-charset euc-kr -f
+mc_spindex create 지오비전/집계구/2018
+##### 유동인구 (2015)
+mc_dataset import csv $MARMOT_DATA/사업단자료/지오비전/유동인구/2015/시간대 지오비전/유동인구/2015/월별_시간대	\
+		-delim '|' -header_first -null_value='0.0' -point_cols 'X_COORD|Y_COORD' -srid 'EPSG:5179' -geom_col 'the_geom(EPSG:5186)' -f
+##### 지오비전 카드매출 (2015)
+mc_upload_files $MARMOT_DATA/사업단자료/지오비전/카드매출/2015/시간대 data/지오비전/카드매출/2015/시간대 -glob '**/*.st'
+#mc_upload_files $MARMOT_DATA/사업단자료/지오비전/카드매출/2015/시간대 data/지오비전/카드매출/2015/시간대 -glob '**/*.txt'
+mc_dataset bind data/지오비전/카드매출/2015/시간대 지오비전/카드매출/2015/일별_시간대_R -type text -f
+mc_copy 지오비전/카드매출/2015/일별_시간대_R 지오비전/카드매출/2015/일별_시간대 -mappers 8 -b 128mb -f
+mc_dataset delete 지오비전/카드매출/2015/일별_시간대_R
+
+
+############################################################################################
+##### 교통 관련 정보
+############################################################################################
+##### 도로망
+mc_dataset import shp $MARMOT_DATA/기타/표준노드링크/20180531/LINK.shp 교통/도로/링크 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset euc-kr -f
+mc_spindex create 교통/도로/링크 -workers 3 
+#mc_dataset import shp $MARMOT_DATA/사업단자료/도로망_2013/노드 교통/도로/노드 -geom_col 'the_geom(EPSG:5186)'	\
+#				-charset euc-kr
+#####  철도망_2013
+mc_dataset import shp $MARMOT_DATA/사업단자료/철도망_2013/철도교차점 교통/철도/노드 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset euc-kr
+mc_dataset import shp $MARMOT_DATA/사업단자료/철도망_2013/철도중심선 교통/철도/링크 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset euc-kr
+##### 지하철
+mc_dataset import shp  $MARMOT_DATA/사업단자료/전국지하철_2015/역사 교통/지하철/역사 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 교통/지하철/역사
+mc_dataset import shp $MARMOT_DATA/사업단자료/전국지하철_2015/선로 교통/지하철/선로 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset euc-kr
+mc_dataset import shp $MARMOT_DATA/사업단자료/전국지하철_2015/출입구 교통/지하철/출입구 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset euc-kr
+##### 서울 지하철: 역사 (polygon)
+mc_dataset import shp $MARMOT_DATA/포스웨이브/서울지하철역사 교통/지하철/서울역사 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset euc-kr -f
+mc_spindex create 교통/지하철/서울역사
+##### 수도권 지하철: 역사위치 (point)
+mc_import_csv $MARMOT_DATA/공공데이터포털/서울시/지하철/역_위치 교통/지하철/서울/역위치 -quote '"' -header_first	\
+				-point_cols 'Y좌표_WGS_,X좌표_WGS_' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 서울 지하철 승하차
+mc_import_csv $MARMOT_DATA/공공데이터포털/서울시/지하철/승하차_인원 교통/지하철/서울/승하차_인원 -quote '"'	\
+				-header_first -f
+##### 버스정류장
+mc_dataset import shp $MARMOT_DATA/BizGis/버스정류장_POI_5181 교통/버스/정류장 -srid EPSG:5181 -charset euc-kr	\
+				-geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create 교통/버스/정류장
+##### 서울시_버스_정류소_위치
+mc_import_csv $MARMOT_DATA/공공데이터포털/서울시/버스/정류소_위치 교통/버스/서울/정류소_위치 -quote '"'	\
+			-header_first -point_cols 'X좌표,Y좌표' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 서울시_버스_승하차_인원
+mc_import_csv $MARMOT_DATA/공공데이터포털/서울시/버스/승하차_인원 교통/버스/서울/승하차_인원 -quote '"' -header_first -f
+##### 서울버스
+mc_import_csv $MARMOT_DATA/공공데이터포털/서울버스/정류소 교통/버스/서울/정류소 -header_first	\
+			-point_cols 'X좌표,Y좌표' -geom_col 'the_geom(EPSG:5186)' -srid EPSG:4326 -f
+
+##### 나비콜 택시 운행 로그
+mc_upload_files $MARMOT_DATA/나비콜/201601 data/나비콜/택시로그 -glob '**/*.st' 
+#mc_upload_files $MARMOT_DATA/나비콜/201601 data/나비콜/택시로그 -glob '**/*.dat'
+mc_dataset bind data/나비콜/택시로그 나비콜/택시로그_R -type text -geom_col 'the_geom(EPSG:4326)' -f
+mc_copy 나비콜/택시로그_R 나비콜/택시로그 -geom_col 'the_geom(EPSG:4326)' -b 128mb -f
+mc_spcluster create 나비콜/택시로그 -v -valid_range 구역/시도 -b 128mb -partitions 3 -f
+mc_dataset delete 나비콜/택시로그_R
+
+##### 사망사고
+import_csv $MARMOT_DATA/기타/교통사고정보/사망교통사고 교통/교통사고/사망사고 -quote '"' -header_first	\
+			-point_cols '경도,위도' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create 교통/교통사고/사망사고
+##### 무단횡단사고
+import_csv $MARMOT_DATA/기타/교통사고정보/무단횡단사고 교통/교통사고/무단횡단사고 -quote "\"" -header_first	\
+			-point_cols '경도,위도' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 보행어린이사고
+import_csv $MARMOT_DATA/기타/교통사고정보/보행어린이사고 교통/교통사고/보행어린이사고 -quote "'" -header_first	\
+			-point_cols  '경도,위도' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 자전거사고
+import_csv $MARMOT_DATA/기타/교통사고정보/자전거사고 교통/교통사고/자전거사고 -quote "'" -header_first	\
+			-point_cols '경도,위도' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 스쿨존사고
+import_csv $MARMOT_DATA/기타/교통사고정보/스쿨존사고 교통/교통사고/스쿨존사고 -quote "'" -header_first	\
+			-point_cols '경도,위도' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 보행노인사고
+import_csv $MARMOT_DATA/기타/교통사고정보/보행노인사고 교통/교통사고/보행노인사고 -quote "'" -header_first	\
+			-point_cols '경도,위도' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+
+############################################################################################
+##### DTG 데이터 (교통안전공단)
+############################################################################################
+#### 운송사 코드
+mc_import_csv $MARMOT_DATA/도로교통안전공단/운수회사별_업종 교통/dtg_companies -header_first -quote '"' -f
+##### (2016.09)
+mc_upload_files $MARMOT_DATA/도로교통안전공단/DTG data/로그/dtg_201609 -glob '**/*.st'
+upload_files $MARMOT_DATA/도로교통안전공단/DTG data/로그/dtg_201609 -glob '**/201609??.csv.gz'
+mc_dataset bind data/로그/dtg_201609 교통/dtg_201609_R -type text -geom_col 'the_geom(EPSG:4326)' -f
+mc_copy 교통/dtg_201609_R 교통/dtg_201609 -c lz4 -f -geom_col 'the_geom(EPSG:4326)'
+mc_dataset delete 교통/dtg_201609_R
+#mc_spcluster create 교통/dtg_201609 -mappers -1 -sample_size '256mb' -cluster_size '1gb' -b 128mb -partitions 11 -f
+##### (2018.09)
+upload_files $MARMOT_DATA/도로교통안전공단/DTG_201809 data/로그/dtg_201809 -glob '**/DTG-r-*.gz'
+mc_dataset bind data/로그/dtg_201809 교통/dtg_201809 -type text -geom_col 'the_geom(EPSG:4326)'
+
+############################################################################################
+##### DTG 데이터 (교통안전공단, 2018년도)
+############################################################################################
+#### 테스트 데이터
+hadoop fs -rm -r -skipTrash data/로그/dtg_201809
+mc_upload_files $MARMOT_DATA/도로교통안전공단/DTG_201809/_meta_st data/로그/dtg_201809
+time upload_files $MARMOT_DATA/도로교통안전공단/DTG_201809 data/로그/dtg_201809 -glob '**/DTG-r-*.gz'
+mc_dataset bind data/로그/dtg_201809 교통/dtg_201809 -type text -geom_col 'the_geom(EPSG:4326)' -f
+
+
+############################################################################################
+##### 주요 지형지물들
+############################################################################################
+##### 전국하천
+mc_dataset import shp $MARMOT_DATA/사업단자료/전국하천/국가하천 지형지물/하천/국가하천 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset euc-kr -f
+mc_dataset import shp $MARMOT_DATA/사업단자료/전국하천/지방1급하천 지형지물/하천/지방1급하천	\
+				-geom_col 'the_geom(EPSG:5186)'	-charset euc-kr -f
+mc_dataset import shp $MARMOT_DATA/사업단자료/전국하천/지방2급하천 지형지물/하천/지방2급하천	\
+				-geom_col 'the_geom(EPSG:5186)'	-charset euc-kr -f
+##### 전국 호수저수지
+mc_dataset import shp $MARMOT_DATA/사업단자료/호수저수지 지형지물/호수저수지 -geom_col 'the_geom(EPSG:5186)'	\
+				-charset euc-kr -f
+##### 산사태 위험등급
+mc_dataset import shp $MARMOT_DATA/사업단자료/산사태_위험등급지도 지형지물/산사태위험등급	\
+				-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+##### 교량
+mc_dataset import shp $MARMOT_DATA/사업단자료/교량 지형지물/교량 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+##### 교차로
+mc_dataset import shp $MARMOT_DATA/사업단자료/교차로 지형지물/교차로 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+
+
+############################################################################################
+##### 주요 POI들
+############################################################################################
+##### 민원행정기관
+mc_dataset import shp $MARMOT_DATA/행자부/민원행정기관 POI/민원행정기관 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+##### 전국 CCTV 설치장소
+mc_dataset import csv $MARMOT_DATA/공공데이터포털/전국cctv POI/전국cctv -delim '|' -header_first -null_value '0'	\
+			-point_cols '경도|위도' -srid EPSG:4326  -geom_col 'the_geom(EPSG:5186)' -f
+##### 주유소 가격
+mc_dataset import csv $MARMOT_DATA/공공데이터포털/주유소_가격 POI/주유소_가격 -delim '|' -header_first	\
+			-point_cols '경도|위도' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create POI/주유소_가격
+#mc_spcluster create POI/주유소_가격 tmp/result -sample_size '64mb' -cluster_size '64mb' -f
+##### 상가업소
+mc_import_csv $MARMOT_DATA/공공데이터포털/상가업소정보_201712 POI/상가업소 -delim ',' -header_first	\
+			-point_cols '경도,위도' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 공중화장실
+mc_import_csv $MARMOT_DATA/공공데이터포털/공중화장실 POI/공중화장실 -delim '|' -header_first -null_value '0'	\
+			-point_cols '경도|위도' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 전국도서관
+mc_import_csv $MARMOT_DATA/공공데이터포털/전국도서관 POI/전국도서관 -delim '|' -header_first	\
+			-point_cols 'LAT|LON' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 전국초중등학교
+import_csv $MARMOT_DATA/공공데이터포털/전국초중등학교 POI/전국초중등학교 -delim '|' -header_first	\
+			-point_cols '경도|위도'	-srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create POI/전국초중등학교
+##### 전국어린이집
+mc_import_csv $MARMOT_DATA/공공데이터포털/전국어린이집 POI/전국어린이집 -delim '|' -header_first	\
+			-point_cols '경도|위도'	-srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 병원
+mc_dataset import csv $MARMOT_DATA/공공데이터포털/병원 POI/병원 -quote '"' -header_first -point_cols '경도,위도'	\
+		-srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create POI/병원
+##### 서울공공와이파이위치
+mc_import_csv $MARMOT_DATA/기타/서울공공와이파이위치 POI/서울공공와이파이위치 -quote '"' -header_first	\
+			-trim_columns -point_cols 'x좌표,y좌표' -srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 대규모점포
+mc_dataset import shp $MARMOT_DATA/사업단자료/대규모점포 POI/대규모점포 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+##### 지구대_파출소
+mc_import_csv $MARMOT_DATA/공공데이터포털/지구대_파출소 POI/지구대_파출소 -header_first -point_cols '경도,위도'	\
+			-srid EPSG:4326 -geom_col 'the_geom(EPSG:5186)' -f
+##### 사회보장시설
+mc_dataset import shp $MARMOT_DATA/사업단자료/사회보장시설 POI/사회보장시설 -geom_col 'the_geom(EPSG:5186)'	\
+			-charset euc-kr -f
+##### 노인복지시설
+mc_dataset import shp  $MARMOT_DATA/사업단자료/노인복지시설_통합 POI/노인복지시설 -f -geom_col 'the_geom(EPSG:5186)' -charset utf-8
+mc_spcluster create POI/노인복지시설 -valid_range 구역/시도 -partitions 1 -v -f
+##### 어린이보호구역
+mc_import_csv $MARMOT_DATA/사업단자료/전국어린이보호구역 POI/어린이보호구역 -quote '"' -header_first	\
+				-geom_col 'the_geom(EPSG:5186)' -f
+##### 주요상권
+mc_dataset import shp $MARMOT_DATA/사업단자료/주요상권 POI/주요상권 -geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create POI/주요상권
+
+
+############################################################################################
+##### 사업단 초기 시연
+############################################################################################
+##### 서울 종합병원
+mc_dataset import shp $MARMOT_DATA/기타/사업단시연/서울_종합병원 POI/서울_종합병원 -geom_col 'the_geom(EPSG:5186)' -f
+
+
+############################################################################################
+##### 건물 에너지 사용
+############################################################################################
+##### 건물별 가스 사용 (2011-2018)
+mc_upload_files $MARMOT_DATA/공공데이터포털/건물에너지/가스사용량 data/건물_주택/건물에너지/가스사용량 -glob '**/*.st'
+mc_upload_files $MARMOT_DATA/공공데이터포털/건물에너지/가스사용량 data/건물_주택/건물에너지/가스사용량 -glob '**/*.txt'
+mc_dataset bind data/건물_주택/건물에너지/가스사용량 건물/건물에너지/가스사용량_R -type text -f
+mc_copy 건물/건물에너지/가스사용량_R 건물/건물에너지/가스사용량 -mappers 3 -v -f
+mc_dataset delete 건물/건물에너지/가스사용량_R
+##### 건물별 전기 사용 (2011-2018)
+mc_upload_files $MARMOT_DATA/공공데이터포털/건물에너지/전기사용량 data/건물_주택/건물에너지/전기사용량 -glob '**/*.st'
+mc_upload_files $MARMOT_DATA/공공데이터포털/건물에너지/전기사용량 data/건물_주택/건물에너지/전기사용량 -glob '**/*.txt'
+mc_dataset bind data/건물_주택/건물에너지/전기사용량 건물/건물에너지/전기사용량_R -type text -f
+mc_copy 건물/건물에너지/전기사용량_R 건물/건물에너지/전기사용량 -mappers 3 -v -f
+mc_dataset delete 건물/건물에너지/전기사용량_R
+
+
+############################################################################################
+##### 안양대 도봉구 분석 데이터
+############################################################################################
+##### 도봉구 전체영역
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/도봉구/전체구역 기타/안양대/도봉구/전체구역 -srid EPSG:5179	\
+				-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+##### 도봉구 행정동구역
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/도봉구/행정동_구역 기타/안양대/도봉구/행정동_구역	\
+				-srid EPSG:5179 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+##### 도봉구 필지
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/도봉구/필지 기타/안양대/도봉구/필지 -srid EPSG:5179	\
+				-geom_col 'the_geom(EPSG:5186)'	-charset euc-kr -f
+mc_spindex create 기타/안양대/도봉구/필지
+##### 도봉구 공원
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/도봉구/공원 기타/안양대/도봉구/공원 -srid EPSG:5179	\
+				-geom_col 'the_geom(EPSG:5186)'	-charset euc-kr -f
+mc_spindex create 기타/안양대/도봉구/공원
+##### 도봉구 도로망
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/도봉구/도로망 기타/안양대/도봉구/도로망 -srid EPSG:5179	\
+				-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 기타/안양대/도봉구/도로망
+##### 도봉구 민원
+mc_dataset import excel $MARMOT_DATA/기타/안양대제공/도봉구/민원 기타/안양대/도봉구/민원 -header_first -point_cols 'x,y'	\
+				-srid EPSG:5181 -geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create 기타/안양대/도봉구/민원
+mc_dataset import excel $MARMOT_DATA/기타/안양대제공/도봉구/공원_민원 기타/안양대/도봉구/공원_민원 -header_first	\
+				-point_cols 'x,y' -srid EPSG:5181 -geom_col 'the_geom(EPSG:5186)' -f
+mc_spindex create 기타/안양대/도봉구/공원_민원
+##### 도봉구 공원 감성분석
+mc_import_excel $MARMOT_DATA/기타/안양대제공/도봉구/공원_감성분석 기타/안양대/도봉구/공원_감성분석 -header_first	\
+				-geom_col 'the_geom(EPSG:5186)' -f
+##### 도봉구 100미터 격자
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/도봉구/GRID_100 기타/안양대/도봉구/GRID_100 -srid EPSG:5179	\
+				-geom_col 'the_geom(EPSG:5186)'	-charset euc-kr -f
+
+##### 비정형데이터 (민원)
+import_csv $MARMOT_DATA/기타/안양대제공/비정형데이터/TXT 기타/안양대/비정형/민원 -quote '"' -escape '\'	\
+			-charset 'euc-kr' -f -header_first
+##### 비정형데이터 (전국격자데이터)
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/비정형데이터/SHP/ALL_Grid1KM 기타/안양대/비정형/격자	\
+			-srid EPSG:5179	-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+##### 비정형데이터 (전국공원데이터)
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/비정형데이터/SHP/Fi_All_Park 기타/안양대/비정형/정원공원	\
+			-srid EPSG:5179	-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+##### 비정형데이터 (전국병원인허가 데이터)
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/비정형데이터/SHP/Fi_ClassLevel_병원 기타/안양대/비정형/인허가_병원	\
+			-srid EPSG:5179	-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+
+
+############################################################################################
+##### 추가 공간 연산 테스트용
+############################################################################################
+
+##### Clip 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/CLIP/Input 안양대/공간연산/clip/input	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_spindex create 안양대/공간연산/clip/input
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/CLIP/ClipFeature 안양대/공간연산/clip/param	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_spindex create 안양대/공간연산/clip/param
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/CLIP/Output 안양대/공간연산/clip/output	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### Split 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPLIT/Input 안양대/공간연산/split/input	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_spindex create 안양대/공간연산/split/input
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPLIT/SplitFeature 안양대/공간연산/split/param	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_spindex create 안양대/공간연산/split/param
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPLIT/Output 안양대/공간연산/split/output/안양동
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPLIT/Output 안양대/공간연산/split/output/박달동	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPLIT/Output 안양대/공간연산/split/output/석수동	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPLIT/Output 안양대/공간연산/split/output/비산동	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPLIT/Output 안양대/공간연산/split/output/관양동	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPLIT/Output 안양대/공간연산/split/output/평촌동	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPLIT/Output 안양대/공간연산/split/output/호계동	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### Intersect 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/INTERSECT/Input 안양대/공간연산/intersect/input	\
+			-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 안양대/공간연산/intersect/input
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/INTERSECT/IntersectFeature	\
+			안양대/공간연산/intersect/param -srid EPSG:5181 -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 안양대/공간연산/intersect/param
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/INTERSECT/Output 안양대/공간연산/intersect/output	\
+			-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### SpatialJoin 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPATIAL_JOIN/TargetFeature	\
+				안양대/공간연산/spatial_join/input	-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_spindex create 안양대/공간연산/spatial_join/input
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPATIAL_JOIN/JoinFeature	\
+			안양대/공간연산/spatial_join/param	-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_spindex create 안양대/공간연산/spatial_join/param
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SPATIAL_JOIN/Output	\
+			안양대/공간연산/spatial_join/output -geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### Union 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/UNION/Input1 안양대/공간연산/union/input	\
+				-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 안양대/공간연산/union/input
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/UNION/Input2 안양대/공간연산/union/param	\
+				-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 안양대/공간연산/union/param
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/UNION/Output 안양대/공간연산/union/output	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### Buffer 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/BUFFER/Input 안양대/공간연산/buffer/input	\
+			-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 안양대/공간연산/buffer/input
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/BUFFER/Output_None	\
+			안양대/공간연산/buffer/output_none -geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+mc_spindex create 안양대/공간연산/buffer/output_none
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/BUFFER/Output_Dissolve	\
+			안양대/공간연산/buffer/output_dissolve	-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### FeatureToPoint 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/FEATURE_TO_POINT/Input	\
+				안양대/공간연산/feature_to_point/input	-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 안양대/공간연산/feature_to_point/input
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/FEATURE_TO_POINT/Output	\
+				안양대/공간연산/feature_to_point/output -geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### MultipartToSinglepart 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/MULTIPART_TO_SINGLEPART/Input	\
+				안양대/공간연산/multipart_to_singlepart/input -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 안양대/공간연산/multipart_to_singlepart/input
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/MULTIPART_TO_SINGLEPART/Output	\
+				안양대/공간연산/multipart_to_singlepart/output	-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### Merge 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/MERGE/Input1 안양대/공간연산/merge/input	\
+				-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 안양대/공간연산/merge/input
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/MERGE/Input2 안양대/공간연산/merge/input2	\
+				-geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 안양대/공간연산/merge/input2
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/MERGE/Output 안양대/공간연산/merge/output	\
+				-geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### Dissolve 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/DISSOLVE/Input \
+                안양대/공간연산/dissolve/input -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/DISSOLVE/Output    \
+                안양대/공간연산/dissolve/output -geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### DefineProjection 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/DEFINE_PROJECTION/Input \
+                안양대/공간연산/define_projection/input -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/DEFINE_PROJECTION/Output    \
+                안양대/공간연산/define_projection/output -geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### Project 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/PROJECT/Input \
+                안양대/공간연산/project/input -geom_col 'the_geom(EPSG:5174)' -charset euc-kr -f
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/PROJECT/Output    \
+                안양대/공간연산/project/output -geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+
+##### SelectByLocation 연산
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SELECT_BY_LOCATION/Building 안양대/공간연산/select/building \
+                -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 안양대/공간연산/select/building
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SELECT_BY_LOCATION/River 안양대/공간연산/select/river \
+                -geom_col 'the_geom(EPSG:5186)' -charset euc-kr -f
+mc_spindex create 안양대/공간연산/select/river
+mc_dataset import shp $MARMOT_DATA/기타/안양대제공/공간연산_테스트/SELECT_BY_LOCATION/Output 안양대/공간연산/select/output    \
+                -geom_col 'the_geom(EPSG:5186)' -charset utf-8 -f
+

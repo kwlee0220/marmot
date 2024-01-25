@@ -1,0 +1,14 @@
+#!	/bin/bash
+
+protoc -I=src/proto/resources 	\
+		--java_out=src/proto/java	\
+		src/proto/resources/marmot.io.proto
+
+protoc -I=src/proto/resources 	\
+		--java_out=src/proto/java	\
+		src/proto/resources/marmot.internal.proto
+
+protoc -I=src/proto/resources 	\
+		--java_out=src/proto/java	\
+		src/proto/resources/marmot.optor.internal.proto
+		

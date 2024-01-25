@@ -1,0 +1,205 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "marmot.proto.optor";
+
+package marmot.proto.optor;
+
+import public "marmot.proto";
+import public "marmot.internal.proto";
+import public "marmot.optor.proto";
+import public "marmot.service.proto";
+
+
+message BuildThumbnailProto {
+	string geom_column = 1;
+	double sample_ratio = 2;
+}
+
+message StoreDataSetPartitionProto {
+	string path = 1;
+	marmot.proto.service.StoreDataSetOptionsProto options = 2;
+}
+message UpdateDataSetInfoProto {
+	string name = 1;
+}
+
+
+// EquiJoin 관련
+message MapReduceEquiJoinProto {
+	string join_columns = 1;
+	string param_dataset = 2;
+	string param_columns = 3;
+	string output_column_expr = 4;
+	marmot.proto.optor.JoinOptionsProto join_options = 5;
+}
+message TagJoinKeyColumnsProto {
+	string join_columns = 1;
+	string param_dataset = 2;
+	string param_columns = 3;
+}
+message JoinPartitionsProto {
+	string join_columns = 1;
+	string left_prefix = 2;
+	marmot.proto.RecordSchemaProto left_record_schema = 3;
+	string right_prefix = 4;
+	marmot.proto.RecordSchemaProto right_record_schema = 5;
+	string output_column_expr = 6;
+	marmot.proto.optor.JoinTypeProto join_type = 7;
+}
+message LeftOuterJoinAtMapSideProto {
+	string input_join_columns = 1;
+	string param_dataset = 2;
+	string param_join_columns = 3;
+	string output_column_expr = 4;
+}
+message SemiJoinAtMapSideProto {
+	string input_join_columns = 1;
+	string param_dataset = 2;
+	string param_join_columns = 3;
+}
+
+// RecordSetReducer 관련
+message VARIntermediateProducerProto {
+	repeated string aggregators = 1;
+}
+message VARIntermediateCombinerProto {
+	repeated string aggregators = 1;
+}
+message VARIntermediateFinalizerProto {
+	repeated string aggregators = 1;
+}
+message AggregateIntermAtMapSideProto {
+	marmot.proto.SerializedProto reducer = 1;
+}
+
+
+message ProduceByGroupProto {
+	string key_columns = 1;
+	string tag_columns = 2;
+	marmot.proto.SerializedProto producer = 3;
+}
+message CombineByGroupProto {
+	string key_columns = 1;
+	string tag_columns = 2;
+	string order_columns = 3;
+	marmot.proto.SerializedProto reducer = 4;
+}
+message FinalizeByGroupProto {
+	string key_columns = 1;
+	string tag_columns = 2;
+	marmot.proto.SerializedProto finalizer = 3;
+}
+message AggregateIntermByGroupAtMapSideProto {
+	string key_columns = 1;
+	string tag_columns = 2;
+	marmot.proto.SerializedProto reducer = 3;
+}
+message TakeNByGroupAtMapSideProto {
+	string key_columns = 1;
+	string tag_columns = 2;
+	string order_columns = 3;
+	int32 take_count = 4;
+}
+message ReduceIntermByGroupAtMapSideProto {
+	string key_columns = 1;
+	string tag_columns = 2;
+	string order_columns = 3;
+	marmot.proto.SerializedProto reducer = 4;
+}
+
+message IdentityRecordTransformProto { }
+message TakeCombinerProto {
+	int64 count = 1;
+}
+
+message MapOutputWriterProto {
+	oneof optional_map_output_key_cols {
+		string map_output_key_cols = 1;
+	}
+}
+message IntermediateTerminalProto {
+	string path = 1;
+}
+
+//
+//	advance operators
+//
+
+// K-Means clustering
+message AssignClusterIdProto {
+	string feature_columns = 1;
+	string cluster_column = 2;
+	bytes centroids = 3;
+}
+message KMeansIterationProto {
+	string workspace_path = 1;
+	string feature_columns = 2;
+	string cluster_column = 3;
+	bytes centroids = 4;
+	int32 worker_count = 5;
+}
+
+// Global Morans'I
+message CalcGlobalMoranIIntermediateProto {
+	string dataset = 1;
+	string geometry_column = 2;
+	string target_column = 3;
+	double radius = 4;
+	marmot.proto.optor.LISAWeightProto wtype = 5;
+	double average = 6;
+}
+
+// local indicator
+message LISAParametersProto {
+	int64 count = 1;
+	double avg = 2;
+	double stddev = 3;
+}
+
+// Getis-Ord Gi*
+message CalcGetisOrdGiProto {
+	string dataset = 1;
+	string geometry_column = 2;
+	string value_column = 3;
+	double radius = 4;
+	LISAWeightProto weight_type = 5;
+	LISAParametersProto parameters = 6;
+}
+
+// Local Morans'I
+message CalcLocalMoransIProto {
+	string dataset = 1;
+	string geometry_column = 2;
+	string value_column = 3;
+	string id_column = 4;
+	double radius = 5;
+	LISAWeightProto weight_type = 6;
+	LISAParametersProto parameters = 7;
+}
+
+//
+//	Spatial index 관련
+//
+
+message MBRTaggedOpaqueTransformProto {
+	marmot.proto.GeometryColumnInfoProto geometry_column = 1;
+	oneof optional_valid_bounds {
+		EnvelopeProto valid_bounds = 2;
+	}
+}
+message SplitQuadSpaceProto {
+	marmot.proto.GeometryColumnInfoProto geometry_column_info = 1;
+	int64 split_size = 2;
+}
+message CreateIndexedClusterPackProto {
+	string cluster_dir = 1;
+	marmot.proto.GeometryColumnInfoProto geometry_column_info = 2;
+	int64 block_size = 3;
+}
+
+message StoreSpatialClusterPackProto {
+	string ds_id = 1;
+	int32 partition_count = 2;
+	marmot.proto.service.StoreDataSetOptionsProto options = 3;
+}

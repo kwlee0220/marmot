@@ -1,0 +1,248 @@
+apply plugin: 'java-library'
+apply plugin: 'maven-publish'
+apply plugin: 'com.github.johnrengelman.shadow'
+
+buildscript {
+	repositories {
+		mavenLocal()
+		jcenter()
+	}
+	dependencies {
+		classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
+	}
+}
+
+group = 'etri'
+version = '20.02.12'
+
+sourceCompatibility = JavaVersion.VERSION_1_8;
+[compileJava,compileTestJava]*.options*.encoding = 'UTF-8'
+
+repositories {
+    mavenLocal()
+	maven {
+		url "http://www.datanucleus.org/downloads/maven2/"
+	}
+	maven {
+		url "http://repo.osgeo.org/repository/release/"
+	}
+	maven {
+		url "https://repo1.maven.org/maven2/"
+	}
+    mavenCentral()
+}
+
+sourceSets.main.java.srcDirs += 'src/main/antlr'
+sourceSets.main.java.srcDirs += 'src/proto/java'
+sourceSets.main.java.srcDirs += 'src/unchecked/java'
+sourceSets.main.java.srcDirs += 'src/ghdfs/java'
+
+ext {
+	hadoop_version = '2.7.3'
+	geotools_version = '26.1'
+	postgresql_version = '42.0.0'
+	postgis_jdbc_version = '2.2.1'
+	kafka_2_11_version = '1.0.0'
+	zkclient_version = '0.11'
+	
+	commons_lang3_version = '3.7'
+	commons_csv_version = '1.5'
+	httpclient_version = '4.5.6'
+	univocity_version = '2.8.1'
+	mvel2_version = '2.4.14.Final'
+	rxjava3_version = '3.1.8'
+	
+	mokito_version = '2.23.0'
+	hamcrest_version = '1.3'
+}
+
+dependencies {
+	compile project(':utils')
+	compile project(':utilsx')
+	compile project(':marmot.common')
+	compile project(':marmot.core')
+	
+	compile ("org.apache.hadoop:hadoop-client:${hadoop_version}") {
+		exclude group: 'com.google.guava'		// shadow 시킬 목적
+		exclude group: 'com.google.protobuf'	// shadow 시킬 목적
+		exclude group: 'io.netty'				// shadow 시킬 목적
+		exclude group: 'org.apache.commons.cli'	// shadow 시킬 목적
+		
+		// 'com.sun.jersey.contribs:jersey.guice' module에서 guava를 예전 버전을 사용하기 때문에 
+		// guava shadow시 바뀐 reference를 사용하지 않게 하기 위해서 'jersey.guice' module을
+		// 제외시킨다. 그렇지 않으면 map/reduce 작업시 오류 발생됨.
+		exclude group: 'com.sun.jersey.contribs'
+	}
+	
+	// GeoTools, JTS, Proj4J
+	implementation "org.geotools:gt-grid:${geotools_version}"
+	implementation 'com.googlecode.efficient-java-matrix-library:ejml:0.25'
+	
+	// PostSQL
+	implementation "org.postgresql:postgresql:${postgresql_version}"
+	implementation "net.postgis:postgis-jdbc:${postgis_jdbc_version}"
+	
+	// ZooKeeper & Kafka
+	implementation group: 'com.101tec', name: 'zkclient', version: "${zkclient_version}"
+	implementation group: 'org.apache.kafka', name: 'kafka_2.11', version: "${kafka_2_11_version}"
+	
+	// Misc
+	implementation "org.apache.httpcomponents:httpclient:${httpclient_version}"
+	implementation "org.apache.commons:commons-csv:${commons_csv_version}"
+	implementation "com.univocity:univocity-parsers:${univocity_version}"
+	implementation "org.mvel:mvel2:${mvel2_version}"
+	implementation "io.reactivex.rxjava3:rxjava:${rxjava3_version}"
+	
+	testCompile "junit:junit:4.12"
+	testCompile "org.mockito:mockito-core:${mokito_version}"
+	testCompile "org.hamcrest:hamcrest-all:${hamcrest_version}"
+}
+
+shadowJar {
+	classifier 'all'
+	
+	mergeServiceFiles()
+	
+	exclude 'META-INF/*.SF'
+	exclude 'META-INF/*.DSA'
+	exclude 'META-INF/*.RSA'
+	
+	relocate 'com.google', 'shadow.com.google'
+	relocate 'io.netty', 'shadow.io.netty'
+	relocate 'org.apache.commons.cli', 'shadow.org.apache.commons.cli'
+	
+	dependencies {
+		exclude(dependency("org.apache.hadoop:.*:"))
+		exclude(dependency("org.apache.curator:.*:"))
+		
+		exclude(dependency("org.apache.avro:.*:"))
+		exclude(dependency("org.codehaus.jackson:.*:"))
+		exclude(dependency("org.xerial.snappy:.*:"))
+		exclude(dependency("com.thoughtworks.paranamer:.*:"))
+//		exclude(dependency("org.slf4j:.*:"))
+		
+		exclude(dependency("org.apache.spark:.*:"))
+		exclude(dependency("org.scalatest:.*:"))
+		exclude(dependency("com.ning:.*:"))
+		exclude(dependency("com.twitter:.*:"))
+		exclude(dependency("com.fasterxml.jackson.module:.*:"))
+		exclude(dependency("net.java.dev.jets3t:.*:"))
+		exclude(dependency("net.razorvine:.*:"))
+		exclude(dependency("org.json4s:.*:"))
+		exclude(dependency("junit:.*:"))
+		exclude(dependency("com.twitter:.*:"))
+		exclude(dependency("io.dropwizard.metrics:.*:"))
+		exclude(dependency("org.apache.httpcomponents:.*:"))
+		exclude(dependency("javax.servlet:.*:"))
+		exclude(dependency("javax.xml.bind:.*:"))
+		exclude(dependency("org.w3c:.*:"))
+		exclude(dependency("javax.xml.bind:.*:"))
+		
+		exclude(dependency("org.apache.zookeeper:.*:"))
+		exclude(dependency("org.mortbay.jetty:.*:"))
+		exclude(dependency("com.sun.jersey:.*:"))
+		exclude(dependency("org.osgi:.*:"))
+		exclude(dependency("commons-io.*:.*:"))
+		exclude(dependency("org.apache.xbean:.*:"))
+		exclude(dependency("org.apache.ivy:.*:"))
+		exclude(dependency("org.apache.htrace:.*:"))
+		exclude(dependency(":commons-math3:"))
+		exclude(dependency(":commons-crypto:"))
+		exclude(dependency(":commons-compress:"))
+		exclude(dependency(":commons-httpclient:"))
+		exclude(dependency(":commons-codec:"))
+		exclude(dependency("xmlenc:.*:"))
+		exclude(dependency(":commons-crypto:"))
+
+		exclude(dependency("com.fasterxml.jackson.core:.*:"))
+		exclude(dependency("org.glassfish.*:.*:"))
+		exclude(dependency("net.sf.py4j:.*:"))
+		exclude(dependency("com.clearspring.analytics:.*:"))
+		exclude(dependency("oro:.*:"))
+	}
+}
+
+task sourceJar(type: Jar) {
+	classifier 'sources'
+	from sourceSets.main.allSource
+}
+
+javadoc {
+	exclude "**/proto/**"
+	options.charSet = 'UTF-8'
+}
+task javadocJar(type: Jar) {
+	classifier 'javadoc'
+	from javadoc.destinationDir
+}
+
+ext.distDir = "${System.env.HOME}/etc/marmot/marmot.server.dist"
+task distributeBinary(type:Copy) {
+	dependsOn assemble
+	into "${distDir}"
+	from ("${projectDir}") {
+		include 'bin/**'
+		include 'hadoop-conf.tar'
+		include '*.properties'
+		include 'import_all'
+		include 'misc/*'
+		include '.gitignore'
+		include '.project'
+	}
+}
+
+artifacts {
+	archives sourceJar
+	archives javadocJar
+	archives shadowJar
+}
+
+publishing {
+	publications {
+		marmot(MavenPublication) {
+			from components.java
+			
+			artifact sourceJar
+			artifact javadocJar
+			artifact shadowJar
+		}
+	}
+}
+
+apply plugin: 'eclipse'
+eclipse {
+	classpath {
+		file {
+			withXml {
+				def node = it.asNode()
+				node.appendNode('classpathentry', [kind: 'output', path: 'classes'])
+			}
+			
+			whenMerged { cp ->
+				Map entryByPath = cp.entries.groupBy { entry -> entry.path }
+				entryByPath.each { key, values ->
+					if ( values.size() > 1 ) {
+            			def entry = values.first()
+            			if ( entry.kind == 'src' ) {
+            				entry.includes = []
+            				entry.excludes = []
+            			}
+            			int index = cp.entries.indexOf entry
+            			cp.entries.removeAll values
+            			cp.entries.add index, entry
+					}
+				}
+				cp.entries.each { entry ->
+					if ( entry.kind == 'src' && entry.hasProperty('output') ) {
+						if ( entry.path.startsWith("src/test/") ) {
+							entry.output = 'test_classes'
+						}
+						else {
+							entry.output = 'classes'
+						}
+					}
+				}
+			}
+		}
+	}
+}

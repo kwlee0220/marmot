@@ -1,0 +1,44 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "marmot.proto";
+
+package marmot.optor.proto;
+
+import public "marmot.proto";
+
+message MarmotCoreProto {
+	string xml_string = 1;
+}
+
+message ScriptRecordTransformProto {
+	oneof optional_output_record_schema {
+		marmot.proto.RecordSchemaProto output_record_schema = 1;
+	}
+	oneof optional_added_record_schema {
+		marmot.proto.RecordSchemaProto added_record_schema = 2;
+	}
+	oneof optional_initializer {
+		string initializer_expr = 3;
+	}
+	string transform_expr = 4;
+	repeated string imported_classes = 5;
+}
+
+message SpatialClusterIndexProto {
+	string pack_id = 1;							// 인덱스 파일이 저장된 파일 이름
+	int32 block_no = 2;							// 파일내 블럭 번호
+	string quad_key = 3;						// 클러스터 인덱스 식별자
+	marmot.proto.EnvelopeProto tile_bounds = 4;	// 클러스터 사각 영역
+	marmot.proto.EnvelopeProto data_bounds = 5;	// 클러스터에 포함된 데이터의 MBR
+	int32 count = 6;							// 클러스터의 포함된 데이터의 갯수
+	int32 owned_count = 7;						// 클러스터 소속 데이터의 갯수
+	int64 start_offset = 8;						// 클러스의 블럭 내 시작 오프셋
+	int64 length = 9;							// 클러스터의 길이 (byte)
+}
+
+message CreateSpatialIndexInfoProto {
+	string dataset = 1;
+	marmot.proto.GeometryColumnInfoProto geometry_column = 2;
+	string hdfs_path = 3;
+}

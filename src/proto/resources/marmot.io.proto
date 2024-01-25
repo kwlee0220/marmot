@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "marmot.proto.io";
+
+package marmot.proto.io;
+
+import public "marmot.proto";
+
+enum SortOrderProto {
+	ASC = 0;
+	DESC = 1;
+}
+
+enum NullsOrderProto {
+	FIRST = 0;
+	LAST = 1;
+}
+
+message GroupKeyValueProto {
+	int32 key_values_count = 1;
+	int32 tag_values_count = 2;
+	int32 order_values_count = 3;
+	repeated ValueProto value = 4;
+	repeated SortOrderProto sort_order = 5;
+	repeated NullsOrderProto nulls_order = 6;
+}
