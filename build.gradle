@@ -1,35 +1,28 @@
-apply plugin: 'java-library'
-apply plugin: 'maven-publish'
-apply plugin: 'com.github.johnrengelman.shadow'
-
-buildscript {
-	repositories {
-		mavenLocal()
-		jcenter()
-	}
-	dependencies {
-		classpath 'com.github.jengelman.gradle.plugins:shadow:4.0.4'
-	}
+plugins {
+	id 'java-library'
+	id 'eclipse'
+	id 'com.github.johnrengelman.shadow' version '8.1.1'
+	id 'maven-publish'
 }
 
 group = 'etri'
 version = '20.02.12'
 
-sourceCompatibility = JavaVersion.VERSION_1_8;
+sourceCompatibility = '17'
+targetCompatibility = '17'
 [compileJava,compileTestJava]*.options*.encoding = 'UTF-8'
 
 repositories {
-    mavenLocal()
+	mavenLocal()
 	maven {
 		url "http://www.datanucleus.org/downloads/maven2/"
+		allowInsecureProtocol = true
 	}
 	maven {
-		url "http://repo.osgeo.org/repository/release/"
+		url "https://repo.osgeo.org/repository/release/"
+		allowInsecureProtocol = true
 	}
-	maven {
-		url "https://repo1.maven.org/maven2/"
-	}
-    mavenCentral()
+	mavenCentral()
 }
 
 sourceSets.main.java.srcDirs += 'src/main/antlr'
@@ -44,6 +37,7 @@ ext {
 	postgis_jdbc_version = '2.2.1'
 	kafka_2_11_version = '1.0.0'
 	zkclient_version = '0.11'
+	grpc_version = '1.60.1'
 	
 	commons_lang3_version = '3.7'
 	commons_csv_version = '1.5'
@@ -57,12 +51,12 @@ ext {
 }
 
 dependencies {
-	compile project(':utils')
-	compile project(':utilsx')
-	compile project(':marmot.common')
-	compile project(':marmot.core')
+	implementation project(':utils')
+	implementation project(':utilsx')
+	implementation project(':marmot.common')
+	implementation project(':marmot.core')
 	
-	compile ("org.apache.hadoop:hadoop-client:${hadoop_version}") {
+	implementation ("org.apache.hadoop:hadoop-client:${hadoop_version}") {
 		exclude group: 'com.google.guava'		// shadow 시킬 목적
 		exclude group: 'com.google.protobuf'	// shadow 시킬 목적
 		exclude group: 'io.netty'				// shadow 시킬 목적
@@ -86,6 +80,9 @@ dependencies {
 	implementation group: 'com.101tec', name: 'zkclient', version: "${zkclient_version}"
 	implementation group: 'org.apache.kafka', name: 'kafka_2.11', version: "${kafka_2_11_version}"
 	
+	// grpc
+	implementation "io.grpc:grpc-netty-shaded:${grpc_version}"
+	
 	// Misc
 	implementation "org.apache.httpcomponents:httpclient:${httpclient_version}"
 	implementation "org.apache.commons:commons-csv:${commons_csv_version}"
@@ -93,13 +90,13 @@ dependencies {
 	implementation "org.mvel:mvel2:${mvel2_version}"
 	implementation "io.reactivex.rxjava3:rxjava:${rxjava3_version}"
 	
-	testCompile "junit:junit:4.12"
-	testCompile "org.mockito:mockito-core:${mokito_version}"
-	testCompile "org.hamcrest:hamcrest-all:${hamcrest_version}"
+	testImplementation "junit:junit:4.12"
+	testImplementation "org.mockito:mockito-core:${mokito_version}"
+	testImplementation "org.hamcrest:hamcrest-all:${hamcrest_version}"
 }
 
 shadowJar {
-	classifier 'all'
+	// classifier 'all'
 	
 	mergeServiceFiles()
 	
@@ -163,7 +160,7 @@ shadowJar {
 }
 
 task sourceJar(type: Jar) {
-	classifier 'sources'
+	// classifier 'sources'
 	from sourceSets.main.allSource
 }
 
@@ -172,7 +169,7 @@ javadoc {
 	options.charSet = 'UTF-8'
 }
 task javadocJar(type: Jar) {
-	classifier 'javadoc'
+	// classifier 'javadoc'
 	from javadoc.destinationDir
 }
 

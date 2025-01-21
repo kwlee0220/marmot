@@ -10,6 +10,12 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import utils.KeyValue;
+import utils.Utilities;
+import utils.func.Tuple;
+import utils.stream.FStream;
+import utils.stream.KVFStream;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -27,11 +33,6 @@ import marmot.optor.support.QuadKeyBinder;
 import marmot.optor.support.QuadKeyBinder.QuadKeyBinding;
 import marmot.plan.SpatialJoinOptions;
 import marmot.support.EnvelopeTaggedRecord;
-import utils.Utilities;
-import utils.func.KeyValue;
-import utils.func.Tuple;
-import utils.stream.FStream;
-import utils.stream.KVFStream;
 
 
 /**
@@ -366,8 +367,10 @@ public abstract class NestedLoopSpatialJoin<T extends NestedLoopSpatialJoin<T>>
 			FStream<Record> inners = m_cache.queryClusterKeys(key)
 											.map(m_cache::getCluster)
 											.flatMap(cluster -> m_sjMatcher.match(outer, cluster))
-											.map(EnvelopeTaggedRecord::getRecord)
-											.mapIf(m_optor.m_semiJoin, fstrm -> fstrm.take(1));
+											.map(EnvelopeTaggedRecord::getRecord);
+			if ( m_optor.m_semiJoin ) {
+				inners = inners.take(1);
+			}
 			++m_outerCount;
 			
 			return new NestedLoopMatch(outer, m_optor.m_innerDs.getRecordSchema(), inners);

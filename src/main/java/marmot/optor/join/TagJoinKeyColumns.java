@@ -1,5 +1,8 @@
 package marmot.optor.join;
 
+import utils.CSV;
+import utils.io.IOUtils;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -16,8 +19,6 @@ import marmot.optor.support.AbstractRecordSetFunction;
 import marmot.proto.optor.TagJoinKeyColumnsProto;
 import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
-import utils.CSV;
-import utils.io.IOUtils;
 
 
 /**
@@ -185,7 +186,7 @@ public class TagJoinKeyColumns extends AbstractRecordSetFunction
 				joinCols.streamKeyColumns()
 						.map(kc -> input.get(kc.name()))
 						.zipWithIndex(3)
-						.forEach(t -> output.set(t._2, t._1));
+						.forEach(t -> output.set(t.index(), t.value()));
 				
 				return true;
 			}

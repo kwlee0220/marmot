@@ -83,8 +83,8 @@ public class CollectToArrayColumn extends RecordLevelTransform
 		
 		RecordSchema outSchema = inputSchema.streamColumns()
 											.zipWithIndex()
-											.filter(t -> !m_mapping[t._2])
-											.fold(RecordSchema.builder(), (b,c) -> b.addColumn(c._1))
+											.filter(t -> !m_mapping[t.index()])
+											.fold(RecordSchema.builder(), (b,c) -> b.addColumn(c.value()))
 											.addColumn(m_definedCol)
 											.build();
 		setInitialized(marmot, inputSchema, outSchema);

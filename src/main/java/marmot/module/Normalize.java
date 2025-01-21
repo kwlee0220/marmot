@@ -136,7 +136,7 @@ public class Normalize implements MarmotModule {
 
 			String updExpr = FStream.from(outCols).zipWithIndex()
 									.map(t -> String.format("%s = (%s-$min[%d])/$total[%d];",
-														outCols.get(t._2), inCols.get(t._2), t._2, t._2))
+														outCols.get(t.index()), inCols.get(t.index()), t.index(), t.index()))
 									.join(" ");
 			String outColDecls = FStream.from(outCols).map(name -> name + ":double").join(",");
 			

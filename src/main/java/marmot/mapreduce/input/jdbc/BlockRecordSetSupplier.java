@@ -3,15 +3,16 @@ package marmot.mapreduce.input.jdbc;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import utils.func.FOption;
+import utils.jdbc.JdbcProcessor;
+import utils.stream.FStream;
+
 import marmot.RecordSchema;
 import marmot.RecordSet;
 import marmot.RecordSetException;
 import marmot.externio.jdbc.GeometryFormat;
 import marmot.externio.jdbc.JdbcRecordAdaptor;
 import marmot.externio.jdbc.JdbcRecordSet;
-import utils.func.FOption;
-import utils.jdbc.JdbcProcessor;
-import utils.stream.FStream;
 
 /**
  * 
@@ -48,7 +49,7 @@ class BlockRecordSetSupplier implements FStream<RecordSet> {
 			
 			String blockSql = String.format("%s offset %d limit %d", m_sql,
 											m_blockStart, m_blockEnd-m_blockStart);
-			ResultSet rs = m_jdbc.executeQuery(blockSql);
+			ResultSet rs = m_jdbc.executeQuery(blockSql, true);
 			return new JdbcRecordSet(m_adaptor, rs).asNonEmpty();
 		}
 		catch ( SQLException e ) {

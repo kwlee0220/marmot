@@ -233,7 +233,7 @@ public class RangeQuery {
 		CompletionService<List<Record>> svc = new ExecutorCompletionService<>(exector);
 		FStream.from(est.getClusterEstimates())
 				.zipWithIndex()
-				.map(t -> new ClusterReader(t._2, idxFile, t._1, sampleRatio))
+				.map(t -> new ClusterReader(t.index(), idxFile, t.value(), sampleRatio))
 				.forEach(svc::submit);
 		
 		SuppliableFStream<List<Record>> recListStream = FStream.pipe(LOCAL_INDEX_SCAN_THREADS);

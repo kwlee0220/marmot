@@ -7,6 +7,9 @@ import org.slf4j.LoggerFactory;
 import com.forcewave.ghdfs.obj.GMetaObject;
 import com.forcewave.ghdfs.reader.GHDFSReader;
 
+import utils.func.Tuple;
+import utils.stream.FStream;
+
 import marmot.MarmotCore;
 import marmot.RecordSchema;
 import marmot.optor.CompositeRecordSetLoader;
@@ -16,8 +19,6 @@ import marmot.proto.optor.LoadGHdfsFileProto;
 import marmot.support.PBSerializable;
 import marmot.support.RecordSetOperatorChain;
 import marmot.type.DataType;
-import utils.func.Tuple;
-import utils.stream.FStream;
 
 
 /**
@@ -56,7 +57,7 @@ public class LoadGHdfsFile extends CompositeRecordSetLoader
 			m_gmeta = reader.getMeta();
 			return FStream.from(m_gmeta.getColumnInfo())
 							.zipWithIndex()
-							.map(tup -> fromGhdfsColumnInfo(m_gmeta, tup._2, tup._1))
+							.map(tup -> fromGhdfsColumnInfo(m_gmeta, tup.index(), tup.value()))
 							.fold(RecordSchema.builder(), (b,t) -> b.addColumn(t._1, t._2))
 							.build();
 		}

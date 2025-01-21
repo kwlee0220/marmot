@@ -8,10 +8,11 @@ import java.util.Map;
 import org.apache.kafka.common.serialization.Serializer;
 import org.hsqldb.lib.DataOutputStream;
 
+import utils.KeyValue;
+
 import marmot.Record;
 import marmot.RecordSetException;
 import marmot.io.RecordWritable;
-import utils.func.KeyValue;
 
 /**
  * 

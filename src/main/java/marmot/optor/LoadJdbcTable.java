@@ -9,6 +9,10 @@ import java.sql.Types;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Job;
 
+import utils.Utilities;
+import utils.jdbc.JdbcProcessor;
+import utils.stream.KVFStream;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.RecordSchema;
@@ -26,9 +30,6 @@ import marmot.plan.LoadJdbcTableOptions;
 import marmot.proto.optor.LoadJdbcTableProto;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.Utilities;
-import utils.jdbc.JdbcProcessor;
-import utils.stream.KVFStream;
 
 /**
  * 
@@ -119,7 +120,7 @@ public class LoadJdbcTable extends AbstractRecordSetLoader implements MapReducea
 																.join(","));
 			sqlBuilder.append(colsExpr);
 			sqlBuilder.append(" from ").append(m_tableName);
-			ResultSet rs = m_jdbc.executeQuery(sqlBuilder.toString());
+			ResultSet rs = m_jdbc.executeQuery(sqlBuilder.toString(), true);
 
 			JdbcRecordAdaptor adaptor = JdbcRecordAdaptor.create(m_jdbc, getRecordSchema(),
 																	GeometryFormat.WKB);
@@ -163,7 +164,7 @@ public class LoadJdbcTable extends AbstractRecordSetLoader implements MapReducea
 	private RecordSchema buildRecordSchema(String selectExpr) {
 		try {
 			String sql = String.format("select %s from %s limit 1", selectExpr, m_tableName);
-			ResultSet rs = m_jdbc.executeQuery(sql);
+			ResultSet rs = m_jdbc.executeQuery(sql, true);
 			ResultSetMetaData meta = rs.getMetaData();
 			
 			RecordSchema.Builder builder = RecordSchema.builder();

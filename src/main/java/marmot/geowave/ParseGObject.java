@@ -11,6 +11,9 @@ import com.forcewave.ghdfs.obj.GObject;
 import com.forcewave.ghdfs.reader.GHDFSReader;
 import com.google.common.collect.Lists;
 
+import utils.func.Tuple;
+import utils.stream.FStream;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -20,8 +23,6 @@ import marmot.optor.support.RecordLevelTransform;
 import marmot.proto.optor.ParseGObjectProto;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.func.Tuple;
-import utils.stream.FStream;
 
 
 /**
@@ -53,7 +54,7 @@ public class ParseGObject extends RecordLevelTransform
 			m_textColIdx = inputSchema.getColumn("text").ordinal();
 			m_schema = FStream.from(m_gmeta.getColumnInfo())
 							.zipWithIndex()
-							.map(tup -> fromGhdfsColumnInfo(tup._2, tup._1))
+							.map(tup -> fromGhdfsColumnInfo(tup.index(), tup.value()))
 							.fold(RecordSchema.builder(), (b,t) -> b.addColumn(t._1, t._2))
 							.build();
 			

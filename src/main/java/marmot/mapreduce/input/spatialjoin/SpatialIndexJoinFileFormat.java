@@ -13,17 +13,18 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.func.FOption;
+import utils.func.Tuple;
+import utils.func.Tuple4;
+import utils.stream.FStream;
+import utils.stream.KeyedGroups;
+
 import marmot.io.RecordWritable;
 import marmot.io.geo.index.GlobalIndex;
 import marmot.io.geo.index.GlobalIndexEntry;
 import marmot.io.serializer.MarmotSerializer;
 import marmot.optor.geo.SpatialQueryOperation;
 import marmot.optor.support.Match;
-import utils.Utilities;
-import utils.func.Tuple;
-import utils.func.Tuple4;
-import utils.stream.FStream;
-import utils.stream.KeyedGroups;
 
 /**
  * 
@@ -93,8 +94,8 @@ public class SpatialIndexJoinFileFormat extends FileInputFormat<NullWritable, Re
 	}
 	
 	public static boolean getIsExistsMatcher(Configuration conf) {
-		return Utilities.mapIfNotNull(conf.get(PROP_IS_EXISTS_MATCHER),
-										str -> Boolean.parseBoolean(str));
+		return FOption.map(conf.get(PROP_IS_EXISTS_MATCHER),
+							str -> Boolean.parseBoolean(str));
 	}
 	
 	public static void setIsExistsMatcher(Configuration conf, boolean flag) {

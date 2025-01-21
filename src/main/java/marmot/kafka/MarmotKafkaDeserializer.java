@@ -7,8 +7,9 @@ import java.util.Map;
 
 import org.apache.kafka.common.serialization.Deserializer;
 
+import utils.KeyValue;
+
 import marmot.RecordSetException;
-import utils.func.KeyValue;
 
 /**
  * 
