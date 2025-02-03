@@ -93,7 +93,7 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 			
 			m_stream = stream;
 			m_state = State.DOWNLOADING;
-			m_guard.signalAll();
+			m_guard.signalAllInGuard();
 		}
 		finally {
 			m_guard.unlock();
@@ -185,7 +185,7 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 					}
 					
 					m_state = State.WAIT_STREAM;
-					m_guard.signalAll();
+					m_guard.signalAllInGuard();
 				}
 				finally {
 					m_guard.unlock();
@@ -202,7 +202,7 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 						
 						m_stream = stream;
 						m_state = State.DOWNLOADING;
-						m_guard.signalAll();
+						m_guard.signalAllInGuard();
 					}
 					finally {
 						m_guard.unlock();
@@ -276,7 +276,7 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 					return m_syncBack;
 				}
 				
-				if ( !m_guard.awaitUntil(due) ) {
+				if ( !m_guard.awaitInGuardUntil(due) ) {
 					throw new TimeoutException("sync timeout");
 				}
 			}
@@ -303,7 +303,7 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 		try {
 			while ( m_state != State.DOWNLOADING ) {
 				if ( m_state == State.NOT_STARTED || m_state == State.WAIT_STREAM ) {
-					if ( !m_guard.awaitUntil(due) ) {
+					if ( !m_guard.awaitInGuardUntil(due) ) {
 						String msg = String.format("Stream is not available within %d minutes",
 													MAX_GET_STREAM_TIMEOUT);
 						Throwable cause = new TimeoutException(msg);
@@ -338,7 +338,7 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 				getLogger().debug("send END_OF_STREAM (Cancelled)");
 				
 				m_state = State.CANCELLING;
-				m_guard.signalAll();
+				m_guard.signalAllInGuard();
 			}
 		}
 		finally {

@@ -171,7 +171,7 @@ public class MultiJobPlanExecution extends PlanExecution implements CancellableW
 					}
 					
 					m_currentStage = stage;
-					m_guard.signalAll();
+					m_guard.signalAllInGuard();
 				}
 				finally {
 					m_guard.unlock();

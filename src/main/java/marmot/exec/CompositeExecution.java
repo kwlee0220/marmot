@@ -58,7 +58,7 @@ class CompositeExecution extends AbstractMarmotExecution<CompositeAnalysis> impl
 				
 				while ( m_state == State.RUNNING ) {
 					try {
-						m_guard.await();
+						m_guard.awaitInGuard();
 					}
 					catch ( InterruptedException e ) {
 						return false;
@@ -88,7 +88,7 @@ class CompositeExecution extends AbstractMarmotExecution<CompositeAnalysis> impl
 		m_guard.lock();
 		try {
 			while ( m_state == State.RUNNING ) {
-				if ( !m_guard.awaitUntil(due) ) {
+				if ( !m_guard.awaitInGuardUntil(due) ) {
 					return false;
 				}
 			}
@@ -112,7 +112,7 @@ class CompositeExecution extends AbstractMarmotExecution<CompositeAnalysis> impl
 				if ( m_state == State.RUNNING ) {
 					m_index = i;
 					m_current = m_exector.start(analysis);
-					m_guard.signalAll();
+					m_guard.signalAllInGuard();
 				}
 				else {
 					return;
