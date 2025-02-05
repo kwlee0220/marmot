@@ -88,7 +88,7 @@ class CompositeExecution extends AbstractMarmotExecution<CompositeAnalysis> impl
 		m_guard.lock();
 		try {
 			while ( m_state == State.RUNNING ) {
-				if ( !m_guard.awaitInGuardUntil(due) ) {
+				if ( !m_guard.awaitUntilInGuard(due) ) {
 					return false;
 				}
 			}

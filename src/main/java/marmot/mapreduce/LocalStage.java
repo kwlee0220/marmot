@@ -9,6 +9,13 @@ import org.apache.hadoop.fs.Path;
 
 import com.google.common.collect.Lists;
 
+import utils.RuntimeInterruptedException;
+import utils.async.CancellableWork;
+import utils.async.Guard;
+import utils.async.GuardedConsumer;
+import utils.async.GuardedSupplier;
+import utils.func.FOption;
+
 import marmot.MarmotCore;
 import marmot.RecordSchema;
 import marmot.RecordSet;
@@ -19,9 +26,6 @@ import marmot.optor.RecordSetConsumer;
 import marmot.optor.RecordSetFunction;
 import marmot.optor.RecordSetLoader;
 import marmot.optor.RecordSetOperator;
-import utils.async.CancellableWork;
-import utils.async.Guard;
-import utils.func.FOption;
 
 
 /**
@@ -121,8 +125,8 @@ class LocalStage extends Stage implements CancellableWork {
 			}
 			
 			m_consumer.initialize(m_marmot, rset.getRecordSchema());
-
-			m_guard.consume(rs -> m_consumerInput = rs, rset, true);
+			
+			GuardedConsumer.<RecordSet>from(m_guard, rs -> m_consumerInput = rs).accept(rset);
 			m_consumer.consume(m_consumerInput);
 			
 			return null;
@@ -137,15 +141,16 @@ class LocalStage extends Stage implements CancellableWork {
 	@Override
 	public boolean cancelWork() {
 		try {
-			RecordSet input = m_guard.awaitUntilAndGet(() -> m_consumerInput != null || !isRunning(),
-														() -> m_consumerInput);
+			RecordSet input = GuardedSupplier.from(m_guard, () -> m_consumerInput)
+											.preCondition(() -> m_consumerInput != null || !isRunning())
+											.get();
 			if ( isRunning() ) {
 				input.closeQuietly();
 			}
 			
 			return true;
 		}
-		catch ( InterruptedException e ) {
+		catch ( RuntimeInterruptedException e ) {
 			return false;
 		}
 	}

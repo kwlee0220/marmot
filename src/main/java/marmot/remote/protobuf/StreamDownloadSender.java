@@ -276,7 +276,7 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 					return m_syncBack;
 				}
 				
-				if ( !m_guard.awaitInGuardUntil(due) ) {
+				if ( !m_guard.awaitUntilInGuard(due) ) {
 					throw new TimeoutException("sync timeout");
 				}
 			}
@@ -303,7 +303,7 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 		try {
 			while ( m_state != State.DOWNLOADING ) {
 				if ( m_state == State.NOT_STARTED || m_state == State.WAIT_STREAM ) {
-					if ( !m_guard.awaitInGuardUntil(due) ) {
+					if ( !m_guard.awaitUntilInGuard(due) ) {
 						String msg = String.format("Stream is not available within %d minutes",
 													MAX_GET_STREAM_TIMEOUT);
 						Throwable cause = new TimeoutException(msg);

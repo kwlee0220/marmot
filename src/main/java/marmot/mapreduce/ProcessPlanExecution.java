@@ -10,18 +10,19 @@ import javax.annotation.concurrent.GuardedBy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Throwables;
+import utils.async.AbstractThreadedExecution;
+import utils.async.CancellableWork;
+import utils.async.Guard;
+import utils.async.GuardedSupplier;
+import utils.io.IOUtils;
+
 import marmot.ExecutePlanOptions;
 import marmot.MarmotInternalException;
 import marmot.Plan;
 import marmot.RecordSchema;
 import marmot.exec.PlanExecution;
 import marmot.proto.service.ExecutePlanRequest;
-import utils.Throwables;
-import utils.async.AbstractThreadedExecution;
-import utils.async.CancellableWork;
-import utils.async.Guard;
-import utils.func.Try;
-import utils.io.IOUtils;
 
 /**
  * 
@@ -87,7 +88,7 @@ class ProcessPlanExecution extends PlanExecution
 	
 	private int forkExec() {
 		try {
-			Try<Process> result = m_guard.tryToGet(() -> {
+			Process proc = GuardedSupplier.from(m_guard, () -> {
 				switch ( getState() ) {
 					case RUNNING:
 						return createAndStartProcess();
@@ -96,9 +97,8 @@ class ProcessPlanExecution extends PlanExecution
 					default:
 						throw new IllegalStateException("state=" + getState());
 				}
-			});
-			
-			return result.get().waitFor();
+			}).get();
+			return proc.waitFor();
 		}
 		catch ( Exception e ) {
 			Throwable cause = Throwables.unwrapThrowable(e);
