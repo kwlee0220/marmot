@@ -13,9 +13,9 @@ import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Tuple;
+import utils.Tuple4;
 import utils.func.FOption;
-import utils.func.Tuple;
-import utils.func.Tuple4;
 import utils.stream.FStream;
 import utils.stream.KeyedGroups;
 
@@ -138,9 +138,10 @@ public class SpatialIndexJoinFileFormat extends FileInputFormat<NullWritable, Re
 					= GlobalIndex.matchClusters(leftIdxFile, rightIdxFile).toList();
 		KeyedGroups<Tuple4<String,Integer,String,Integer>,Match<GlobalIndexEntry>> groups
 					= FStream.from(matches)
-							.groupByKey(this::toKey);
-		return groups.stream()
-					.toValueStream()
+							.tagKey(this::toKey)
+							.groupByKey();
+		return groups.fstream()
+					.values()
 					.map(ClusterFileJoinSplit::new)
 					.cast(InputSplit.class)
 					.toList();

@@ -6,7 +6,7 @@ import com.google.common.collect.Maps;
 import com.google.common.collect.MinMaxPriorityQueue;
 
 import utils.stream.FStream;
-import utils.stream.KVFStream;
+import utils.stream.KeyValueFStream;
 
 import marmot.MarmotCore;
 import marmot.Record;
@@ -81,9 +81,9 @@ public class TakeNByGroupAtMapSide extends AbstractRecordSetFunction
 			queue.add(new Node(rec));
 		}
 		
-		return RecordSet.from(KVFStream.from(groups)
-										.flatMap(kv -> FStream.from(kv.value()))
-										.map(n -> n.m_record));
+		return RecordSet.from(KeyValueFStream.from(groups)
+											.flatMap(kv -> FStream.from(kv.value()))
+											.map(n -> n.m_record));
 	}
 
 

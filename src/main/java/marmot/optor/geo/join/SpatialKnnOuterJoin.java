@@ -17,8 +17,9 @@ import marmot.optor.support.colexpr.ColumnSelector;
 import marmot.plan.SpatialJoinOptions;
 import marmot.proto.optor.SpatialKnnOuterJoinProto;
 import marmot.support.PBSerializable;
+
+import utils.Tuple;
 import utils.func.FOption;
-import utils.func.Tuple;
 import utils.stream.PrependableFStream;
 
 

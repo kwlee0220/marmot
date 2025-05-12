@@ -10,7 +10,8 @@ import marmot.proto.optor.BuildThumbnailProto;
 import marmot.rset.PeekableRecordSet;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.func.Tuple;
+
+import utils.Tuple;
 import utils.stream.FStream;
 
 

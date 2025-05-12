@@ -14,7 +14,6 @@ import utils.Throwables;
 import utils.async.AbstractThreadedExecution;
 import utils.async.CancellableWork;
 import utils.async.Guard;
-import utils.async.GuardedSupplier;
 import utils.io.IOUtils;
 
 import marmot.ExecutePlanOptions;
@@ -88,7 +87,7 @@ class ProcessPlanExecution extends PlanExecution
 	
 	private int forkExec() {
 		try {
-			Process proc = GuardedSupplier.from(m_guard, () -> {
+			Process proc = m_guard.getChecked(() -> {
 				switch ( getState() ) {
 					case RUNNING:
 						return createAndStartProcess();
@@ -97,7 +96,7 @@ class ProcessPlanExecution extends PlanExecution
 					default:
 						throw new IllegalStateException("state=" + getState());
 				}
-			}).get();
+			});
 			return proc.waitFor();
 		}
 		catch ( Exception e ) {

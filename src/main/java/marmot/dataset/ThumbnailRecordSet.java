@@ -10,6 +10,8 @@ import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 
 import com.google.common.collect.Sets;
 
+import utils.Tuple;
+
 import marmot.Record;
 import marmot.RecordSchema;
 import marmot.RecordSet;
@@ -18,7 +20,6 @@ import marmot.geo.query.RangeQueryEstimate;
 import marmot.io.MarmotFileNotFoundException;
 import marmot.io.MarmotSequenceFile;
 import marmot.rset.AbstractRecordSet;
-import utils.func.Tuple;
 
 /**
  * 

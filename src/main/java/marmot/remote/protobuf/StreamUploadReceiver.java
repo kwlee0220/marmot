@@ -14,14 +14,16 @@ import com.google.protobuf.ByteString;
 import io.grpc.Status.Code;
 import io.grpc.StatusRuntimeException;
 import io.grpc.stub.StreamObserver;
-import marmot.proto.service.UpChunkRequest;
-import marmot.proto.service.UpChunkResponse;
-import marmot.protobuf.PBUtils;
-import marmot.protobuf.SuppliableInputStream;
+
 import utils.LoggerSettable;
 import utils.Throwables;
 import utils.async.AbstractThreadedExecution;
 import utils.async.Guard;
+
+import marmot.proto.service.UpChunkRequest;
+import marmot.proto.service.UpChunkResponse;
+import marmot.protobuf.PBUtils;
+import marmot.protobuf.SuppliableInputStream;
 
 
 /**

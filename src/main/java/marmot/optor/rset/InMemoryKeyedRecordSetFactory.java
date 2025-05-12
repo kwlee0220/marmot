@@ -7,6 +7,12 @@ import org.slf4j.Logger;
 
 import com.google.common.base.Preconditions;
 
+import utils.StopWatch;
+import utils.Utilities;
+import utils.func.FOption;
+import utils.stream.KeyValueFStream;
+import utils.stream.KeyedGroups;
+
 import marmot.Record;
 import marmot.RecordComparator;
 import marmot.RecordSchema;
@@ -17,11 +23,6 @@ import marmot.optor.support.KeyedRecordSet;
 import marmot.optor.support.KeyedRecordSetFactory;
 import marmot.rset.AbstractRecordSet;
 import marmot.support.ProgressReportable;
-import utils.StopWatch;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.stream.KVFStream;
-import utils.stream.KeyedGroups;
 
 /**
  * 
@@ -36,7 +37,7 @@ public class InMemoryKeyedRecordSetFactory implements KeyedRecordSetFactory {
 	private final RecordSchema m_groupKeySchema;
 	private final RecordSchema m_outSchema;
 	private final boolean m_sortByKey;
-	private KVFStream<RecordKey,List<Record>> m_groups;
+	private KeyValueFStream<RecordKey,List<Record>> m_groups;
 	
 	private int m_groupCount;
 	
@@ -111,13 +112,14 @@ public class InMemoryKeyedRecordSetFactory implements KeyedRecordSetFactory {
 		m_src.close();
 	}
 	
-	private KVFStream<RecordKey,List<Record>> buildGroups() {
+	private KeyValueFStream<RecordKey,List<Record>> buildGroups() {
 		try  {
 			KeyedGroups<RecordKey,Record> keyeds = m_src.fstream()
-														.groupByKey(r -> RecordKey.from(m_keyCols, r));
+														.tagKey(r -> RecordKey.from(m_keyCols, r))
+														.groupByKey();
 			m_groupCount = keyeds.groupCount();
 			
-			KVFStream<RecordKey,List<Record>> groups = keyeds.stream();
+			KeyValueFStream<RecordKey,List<Record>> groups = keyeds.fstream();
 			if ( m_orderCols.length() > 0 ) {
 				groups = groups.mapValue(this::sortValues);
 			}

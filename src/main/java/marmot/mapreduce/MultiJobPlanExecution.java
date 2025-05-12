@@ -15,6 +15,13 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import utils.async.CancellableWork;
+import utils.async.Guard;
+import utils.func.FOption;
+import utils.func.Lazy;
+import utils.func.Try;
+import utils.stream.FStream;
+
 import marmot.MarmotCore;
 import marmot.Plan;
 import marmot.RecordSchema;
@@ -34,12 +41,6 @@ import marmot.optor.StoreAsHeapfile;
 import marmot.optor.support.LoadEmptyMarmotFile;
 import marmot.optor.support.RecordSetOperators;
 import marmot.support.RecordSetOperatorChain;
-import utils.async.CancellableWork;
-import utils.async.Guard;
-import utils.func.FOption;
-import utils.func.Lazy;
-import utils.func.Try;
-import utils.stream.FStream;
 
 
 /**
@@ -171,7 +172,7 @@ public class MultiJobPlanExecution extends PlanExecution implements CancellableW
 					}
 					
 					m_currentStage = stage;
-					m_guard.signalAllInGuard();
+					m_guard.signalAll();
 				}
 				finally {
 					m_guard.unlock();
@@ -212,20 +213,19 @@ public class MultiJobPlanExecution extends PlanExecution implements CancellableW
 	
 	@Override
 	public boolean cancelWork() {
-		m_guard.lock();
 		try {
-			m_guard.awaitUntil(() -> m_currentStage != null || !isRunning());
-			if ( m_currentStage != null ) {
-				return m_currentStage.cancel(true);
-			}
-			
-			return true;
+			return m_guard.awaitCondition(() -> m_currentStage != null || !isRunning())
+							.andGet(() -> {
+								if ( m_currentStage != null ) {
+									return m_currentStage.cancel(true);
+								}
+								else {
+									return true;
+								}
+							});
 		}
 		catch ( InterruptedException e ) {
 			return false;
-		}
-		finally {
-			m_guard.unlock();
 		}
 	}
 	

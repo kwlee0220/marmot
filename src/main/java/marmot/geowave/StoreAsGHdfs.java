@@ -121,7 +121,7 @@ public class StoreAsGHdfs extends AbstractRecordSetConsumer
 	
 	private GObject toGObject(Record record) {
 		ArrayList<Object> columnList = record.fstream()
-											.toValueStream()
+											.values()
 											.toList();
 		Envelope bounds = record.getGeometry(m_geomColIdx).getEnvelopeInternal();
 		return new GObject(columnList, bounds);

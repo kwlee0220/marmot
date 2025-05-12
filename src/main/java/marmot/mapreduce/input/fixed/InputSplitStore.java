@@ -17,10 +17,11 @@ import org.slf4j.LoggerFactory;
 
 import marmot.exec.AnalysisStoreException;
 import marmot.io.serializer.MarmotSerializers;
+
+import utils.Tuple;
 import utils.func.CheckedFunctionX;
 import utils.func.FOption;
 import utils.func.Try;
-import utils.func.Tuple;
 import utils.io.IOUtils;
 import utils.jdbc.JdbcUtils;
 

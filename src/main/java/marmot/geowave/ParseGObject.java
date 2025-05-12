@@ -11,7 +11,7 @@ import com.forcewave.ghdfs.obj.GObject;
 import com.forcewave.ghdfs.reader.GHDFSReader;
 import com.google.common.collect.Lists;
 
-import utils.func.Tuple;
+import utils.Tuple;
 import utils.stream.FStream;
 
 import marmot.MarmotCore;

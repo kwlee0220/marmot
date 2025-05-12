@@ -11,6 +11,9 @@ import org.slf4j.Logger;
 
 import com.google.common.base.Preconditions;
 
+import utils.StopWatch;
+import utils.func.FOption;
+
 import marmot.MarmotCore;
 import marmot.MarmotInternalException;
 import marmot.Record;
@@ -24,8 +27,6 @@ import marmot.protobuf.PBUtils;
 import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
 import marmot.support.ProgressReportable;
-import utils.StopWatch;
-import utils.func.FOption;
 
 
 /**
@@ -95,7 +96,8 @@ public class MapOutputWriter extends AbstractRecordSetConsumer
 			Map<String,Object> values = record.toMap();
 			Map<String,Object> reduced = record.getRecordSchema().streamColumns()
 												.filter(c -> !c.type().isGeometryType())
-												.toMap(c -> c.name(), c -> values.get(c.name()));
+												.toKeyValueStream(c -> c.name(), c -> values.get(c.name()))
+												.toMap();
 			
 			String msg = String.format("fails to write mapper output: record=%s, cause=%s",
 										reduced, "" + e);

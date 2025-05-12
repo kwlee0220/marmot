@@ -58,7 +58,7 @@ class CompositeExecution extends AbstractMarmotExecution<CompositeAnalysis> impl
 				
 				while ( m_state == State.RUNNING ) {
 					try {
-						m_guard.awaitInGuard();
+						m_guard.awaitSignal();
 					}
 					catch ( InterruptedException e ) {
 						return false;
@@ -78,7 +78,7 @@ class CompositeExecution extends AbstractMarmotExecution<CompositeAnalysis> impl
 
 	@Override
 	public void waitForFinished() throws InterruptedException {
-		m_guard.awaitWhile(() -> m_state == State.RUNNING);
+		m_guard.awaitCondition(() -> m_state != State.RUNNING).andReturn();
 	}
 
 	@Override
@@ -88,7 +88,7 @@ class CompositeExecution extends AbstractMarmotExecution<CompositeAnalysis> impl
 		m_guard.lock();
 		try {
 			while ( m_state == State.RUNNING ) {
-				if ( !m_guard.awaitUntilInGuard(due) ) {
+				if ( !m_guard.awaitSignal(due) ) {
 					return false;
 				}
 			}
@@ -102,7 +102,7 @@ class CompositeExecution extends AbstractMarmotExecution<CompositeAnalysis> impl
 	
 	@Override
 	public void run() throws Exception {
-		m_guard.runAndSignalAll(() -> m_state = State.RUNNING);
+		m_guard.run(() -> m_state = State.RUNNING);
 		
 		for ( int i =0; i < m_components.size(); ++i ) {
 			MarmotAnalysis analysis = m_exector.getAnalysis(m_components.get(i));
@@ -112,7 +112,7 @@ class CompositeExecution extends AbstractMarmotExecution<CompositeAnalysis> impl
 				if ( m_state == State.RUNNING ) {
 					m_index = i;
 					m_current = m_exector.start(analysis);
-					m_guard.signalAllInGuard();
+					m_guard.signalAll();
 				}
 				else {
 					return;
@@ -150,7 +150,7 @@ class CompositeExecution extends AbstractMarmotExecution<CompositeAnalysis> impl
 				String compId = m_components.get(m_index);
 				String msg = String.format("%s: component[%d:%s] failed, cause=%s",
 											m_analysis.get().getId(), m_index, compId, cause);
-				m_guard.runAndSignalAll(() -> {
+				m_guard.run(() -> {
 					m_state = m_current.getState();
 					m_cause = new MarmotExecutionException(msg);
 				});
@@ -160,7 +160,7 @@ class CompositeExecution extends AbstractMarmotExecution<CompositeAnalysis> impl
 			}
 		}
 		
-		m_guard.runAndSignalAll(() -> m_state = State.COMPLETED);
+		m_guard.run(() -> m_state = State.COMPLETED);
 	}
 	
 	private MarmotExecutionException toMarmotExecutionException(Throwable e) {

@@ -23,9 +23,9 @@ import picocli.CommandLine.Model.CommandSpec;
 import picocli.CommandLine.Option;
 import picocli.CommandLine.Spec;
 import utils.PicocliCommand;
+import utils.Tuple;
 import utils.UsageHelp;
 import utils.func.FOption;
-import utils.func.Tuple;
 
 /**
  * 

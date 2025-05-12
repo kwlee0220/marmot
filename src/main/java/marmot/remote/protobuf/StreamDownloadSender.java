@@ -15,9 +15,7 @@ import com.google.common.base.Preconditions;
 import com.google.protobuf.ByteString;
 
 import io.grpc.stub.StreamObserver;
-import marmot.proto.service.DownChunkRequest;
-import marmot.proto.service.DownChunkResponse;
-import marmot.protobuf.PBUtils;
+
 import utils.LoggerSettable;
 import utils.Throwables;
 import utils.Utilities;
@@ -26,6 +24,10 @@ import utils.async.Guard;
 import utils.func.Try;
 import utils.io.IOUtils;
 import utils.io.LimitedInputStream;
+
+import marmot.proto.service.DownChunkRequest;
+import marmot.proto.service.DownChunkResponse;
+import marmot.protobuf.PBUtils;
 
 /**
  * 
@@ -85,19 +87,14 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 	public void setInputStream(InputStream stream) {
 		Utilities.checkNotNullArgument(stream, "Download stream");
 		
-		m_guard.lock();
-		try {
+		m_guard.run(() -> {
 			if ( m_state != State.NOT_STARTED ) {
 				throw new IllegalStateException("state=" + m_state + ", expected=" + State.NOT_STARTED);
 			}
 			
 			m_stream = stream;
 			m_state = State.DOWNLOADING;
-			m_guard.signalAllInGuard();
-		}
-		finally {
-			m_guard.unlock();
-		}
+		});
 	}
 	
 	public StreamDownloadSender chunkSize(int size) {
@@ -167,14 +164,13 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 		switch ( req.getEitherCase() ) {
 			case SYNC_BACK:
 				getLogger().debug("received SYNC_BACK[{}]", req.getSyncBack());
-				m_guard.runAndSignalAll(() -> m_syncBack = req.getSyncBack());
+				m_guard.run(() -> m_syncBack = req.getSyncBack());
 				break;
 			case HEADER:
 				ByteString header = req.getHeader();
 				getLogger().debug("received HEADER[size={}]", header.size());
 				
-				m_guard.lock();
-				try {
+				m_guard.runChecked(() -> {
 					if ( m_state != State.NOT_STARTED ) {
 						Throwable cause = new IllegalArgumentException("state=" + m_state
 																	+ ", expected=" + State.NOT_STARTED);
@@ -185,28 +181,19 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 					}
 					
 					m_state = State.WAIT_STREAM;
-					m_guard.signalAllInGuard();
-				}
-				finally {
-					m_guard.unlock();
-				}
+				});
 
 				try {
 					InputStream stream = getStream(header);
 					
-					m_guard.lock();
-					try {
+					m_guard.runChecked(() -> {
 						if ( m_state != State.WAIT_STREAM ) {
 							throw new IllegalStateException("state=" + m_state + ", expected=" + State.WAIT_STREAM);
 						}
 						
 						m_stream = stream;
 						m_state = State.DOWNLOADING;
-						m_guard.signalAllInGuard();
-					}
-					finally {
-						m_guard.unlock();
-					}
+					});
 				}
 				catch ( Exception e ) {
 					Throwable cause = Throwables.unwrapThrowable(e);
@@ -276,7 +263,7 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 					return m_syncBack;
 				}
 				
-				if ( !m_guard.awaitUntilInGuard(due) ) {
+				if ( !m_guard.awaitSignal(due) ) {
 					throw new TimeoutException("sync timeout");
 				}
 			}
@@ -303,7 +290,7 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 		try {
 			while ( m_state != State.DOWNLOADING ) {
 				if ( m_state == State.NOT_STARTED || m_state == State.WAIT_STREAM ) {
-					if ( !m_guard.awaitUntilInGuard(due) ) {
+					if ( !m_guard.awaitSignal(due) ) {
 						String msg = String.format("Stream is not available within %d minutes",
 													MAX_GET_STREAM_TIMEOUT);
 						Throwable cause = new TimeoutException(msg);
@@ -331,22 +318,16 @@ public class StreamDownloadSender extends AbstractThreadedExecution<Void>
 	private void onClientCancelled() {
 		getLogger().debug("received CANCEL");
 		
-		m_guard.lock();
-		try {
+		m_guard.run(() -> {
 			if ( m_state == State.DOWNLOADING ) {
 				m_channel.onNext(DownChunkRequest.newBuilder().setEos(PBUtils.VOID).build());
 				getLogger().debug("send END_OF_STREAM (Cancelled)");
 				
 				m_state = State.CANCELLING;
-				m_guard.signalAllInGuard();
 			}
-		}
-		finally {
-			m_guard.unlock();
-		}
-		
+		});
 		cancel(true);
 		
-		m_guard.runAndSignalAll(() -> m_state = State.CANCELLED);
+		m_guard.run(() -> m_state = State.CANCELLED);
 	}
 }

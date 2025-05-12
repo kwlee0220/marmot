@@ -9,11 +9,8 @@ import org.apache.hadoop.fs.Path;
 
 import com.google.common.collect.Lists;
 
-import utils.RuntimeInterruptedException;
 import utils.async.CancellableWork;
 import utils.async.Guard;
-import utils.async.GuardedConsumer;
-import utils.async.GuardedSupplier;
 import utils.func.FOption;
 
 import marmot.MarmotCore;
@@ -126,7 +123,7 @@ class LocalStage extends Stage implements CancellableWork {
 			
 			m_consumer.initialize(m_marmot, rset.getRecordSchema());
 			
-			GuardedConsumer.<RecordSet>from(m_guard, rs -> m_consumerInput = rs).accept(rset);
+			m_guard.accept(rs -> m_consumerInput = rs, rset);
 			m_consumer.consume(m_consumerInput);
 			
 			return null;
@@ -141,16 +138,15 @@ class LocalStage extends Stage implements CancellableWork {
 	@Override
 	public boolean cancelWork() {
 		try {
-			RecordSet input = GuardedSupplier.from(m_guard, () -> m_consumerInput)
-											.preCondition(() -> m_consumerInput != null || !isRunning())
-											.get();
+			RecordSet input = m_guard.awaitCondition(() -> m_consumerInput != null || !isRunning())
+						                .andGet(() -> m_consumerInput);
 			if ( isRunning() ) {
 				input.closeQuietly();
 			}
 			
 			return true;
 		}
-		catch ( RuntimeInterruptedException e ) {
+		catch ( InterruptedException e ) {
 			return false;
 		}
 	}

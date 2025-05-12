@@ -2,6 +2,7 @@ package marmot.optor.geo.join;
 
 import java.util.List;
 import java.util.Set;
+import java.util.function.Function;
 
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
@@ -11,10 +12,9 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import utils.KeyValue;
+import utils.Tuple;
 import utils.Utilities;
-import utils.func.Tuple;
 import utils.stream.FStream;
-import utils.stream.KVFStream;
 
 import marmot.Column;
 import marmot.MarmotCore;
@@ -217,7 +217,8 @@ public abstract class NestedLoopSpatialJoin<T extends NestedLoopSpatialJoin<T>>
 							.map(outer -> sortOut(qkBinder, outer))
 							.filter(kv -> kv.key() != 0)
 							.toKeyValueStream(kv -> kv)
-							.findBiggestGroupWithinWindow(2 * MAX_WINDOW_SIZE)
+							.liftKeyValues(inStrm -> new FindBiggestGroupWithinWindow<>(inStrm, 2 * MAX_WINDOW_SIZE))
+//							.findBiggestGroupWithinWindow(2 * MAX_WINDOW_SIZE, 2 * MAX_WINDOW_SIZE)
 							.flatMap(kv -> kv.key() == 1 ? joinWithClustering(kv.value()) : joinWithoutClustering(kv.value()));
 		}
 		
@@ -252,10 +253,10 @@ public abstract class NestedLoopSpatialJoin<T extends NestedLoopSpatialJoin<T>>
 		}
 		
 		private FStream<Record> joinWithClustering(List<Tuple<Record,List<String>>> list) {
-			return KVFStream.fromTupleList(list)
-							.map(kv -> KeyValue.of(kv.value().get(0), kv.key()))
-							.toKeyValueStream(kv -> kv)
-							.findBiggestGroupWithinWindow(MAX_WINDOW_SIZE, 1)
+			return FStream.from(list)
+							.toKeyValueStream(tup -> KeyValue.of(tup._2.get(0), tup._1))
+							.liftKeyValues(inStrm -> new FindBiggestGroupWithinWindow<>(inStrm, MAX_WINDOW_SIZE, 1))
+//							.findBiggestGroupWithinWindow(MAX_WINDOW_SIZE, 1)
 							.map(kv -> new ClusteringNLJoinJob(kv.key(), kv.value()))
 							.flatMap(job -> job.run());
 		}
@@ -297,8 +298,9 @@ public abstract class NestedLoopSpatialJoin<T extends NestedLoopSpatialJoin<T>>
 									= FStream.from(records)
 											.flatMap(t -> FStream.from(t._2)
 																.map(k -> KeyValue.of(k, t._1)))
-											.groupByKey(kv -> kv.key(), kv -> kv.value())
-											.stream()
+											.toKeyValueStream(Function.identity())
+											.groupByKey()
+											.fstream()
 											.max(kv -> kv.value().size())
 											.get();
 				

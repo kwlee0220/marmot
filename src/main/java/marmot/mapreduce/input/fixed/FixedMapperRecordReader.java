@@ -17,8 +17,8 @@ import marmot.mapreduce.MarmotMRContexts;
 import marmot.optor.RecordSetOperatorException;
 import utils.StopWatch;
 import utils.Throwables;
+import utils.Tuple;
 import utils.func.FOption;
-import utils.func.Tuple;
 
 /**
  * 

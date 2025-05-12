@@ -11,7 +11,7 @@ import org.apache.hadoop.mapreduce.Job;
 
 import utils.Utilities;
 import utils.jdbc.JdbcProcessor;
-import utils.stream.KVFStream;
+import utils.stream.KeyValueFStream;
 
 import marmot.Column;
 import marmot.MarmotCore;
@@ -181,11 +181,11 @@ public class LoadJdbcTable extends AbstractRecordSetLoader implements MapReducea
 	
 	private RecordSchema buildRecordSchema() {
 		try {
-			return KVFStream.from(m_jdbc.getColumns(m_tableName))
-							.mapValue((k,v) -> fromSqlType(v.type(), v.typeName()))
-							.fold(RecordSchema.builder(),
-										(b,kv) -> b.addColumn(kv.key(), kv.value()))
-							.build();
+			return KeyValueFStream.from(m_jdbc.getColumns(m_tableName))
+									.mapValue((k,v) -> fromSqlType(v.type(), v.typeName()))
+									.fold(RecordSchema.builder(),
+												(b,kv) -> b.addColumn(kv.key(), kv.value()))
+									.build();
 		}
 		catch ( Exception e ) {
 			throw new MarmotExecutionException(e);

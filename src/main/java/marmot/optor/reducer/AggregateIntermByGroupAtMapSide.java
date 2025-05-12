@@ -6,6 +6,10 @@ import org.slf4j.Logger;
 
 import com.google.common.collect.Maps;
 
+import utils.StopWatch;
+import utils.stream.FStream;
+import utils.stream.KeyValueFStream;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -20,9 +24,6 @@ import marmot.rset.AbstractRecordSet;
 import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
 import marmot.support.ProgressReportable;
-import utils.StopWatch;
-import utils.stream.FStream;
-import utils.stream.KVFStream;
 
 /**
  * 
@@ -201,13 +202,13 @@ public class AggregateIntermByGroupAtMapSide extends AbstractRecordSetFunction
 			}
 			
 			return RecordSet.from(getRecordSchema(),
-									KVFStream.from(m_accumGroups)
-											.map((k, v) -> {
-												Record output = DefaultRecord.of(getRecordSchema());
-												output.setAll(k.getValues());
-												output.setAll(k.length(), v.m_accumRecord.getAll());
-												return output;
-											}));
+									KeyValueFStream.from(m_accumGroups)
+													.map((k, v) -> {
+														Record output = DefaultRecord.of(getRecordSchema());
+														output.setAll(k.getValues());
+														output.setAll(k.length(), v.m_accumRecord.getAll());
+														return output;
+													}));
 		}
 	}
 }

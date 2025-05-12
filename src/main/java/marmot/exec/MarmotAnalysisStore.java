@@ -20,11 +20,6 @@ import com.google.common.collect.Lists;
 import com.google.common.collect.Sets;
 import com.google.protobuf.InvalidProtocolBufferException;
 
-import marmot.ExecutePlanOptions;
-import marmot.Plan;
-import marmot.analysis.system.SystemAnalysis;
-import marmot.exec.MarmotAnalysis.Type;
-import marmot.protobuf.PBUtils;
 import utils.CSV;
 import utils.Utilities;
 import utils.func.CheckedFunctionX;
@@ -33,7 +28,13 @@ import utils.io.IOUtils;
 import utils.jdbc.JdbcException;
 import utils.jdbc.JdbcUtils;
 import utils.stream.FStream;
-import utils.stream.KVFStream;
+import utils.stream.KeyValueFStream;
+
+import marmot.ExecutePlanOptions;
+import marmot.Plan;
+import marmot.analysis.system.SystemAnalysis;
+import marmot.exec.MarmotAnalysis.Type;
+import marmot.protobuf.PBUtils;
 
 /**
  * 
@@ -182,10 +183,9 @@ public class MarmotAnalysisStore {
 						break;
 					case MODULE:
 						ModuleAnalysis module = (ModuleAnalysis)analysis;
-						argsExpr = KVFStream.from(module.getArguments())
-											.toKeyValueStream()
-											.map(kv -> kv.toString())
-											.join(";");
+						argsExpr = KeyValueFStream.from(module.getArguments())
+													.map(kv -> kv.toString())
+													.join(";");
 						pstmt.setString(3, module.getModuleId());
 						pstmt.setString(4, argsExpr);
 						break;

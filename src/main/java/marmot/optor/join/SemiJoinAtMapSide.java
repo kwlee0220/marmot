@@ -111,8 +111,10 @@ public class SemiJoinAtMapSide extends AbstractRecordSetFunction
 		private Map<RecordKey,List<Record>> buildParamLookupTable() {
 			return m_optor.getMarmotCore()
 							.getDataSet(m_optor.m_paramDsId)
-							.read().fstream()
-							.groupByKey(r -> RecordKey.from(m_paramJoinCols, r))
+							.read()
+							.fstream()
+							.tagKey(r -> RecordKey.from(m_paramJoinCols, r))
+							.groupByKey()
 							.asMap();
 		}
 	}

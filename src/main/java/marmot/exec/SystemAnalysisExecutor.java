@@ -58,8 +58,8 @@ class SystemAnalysisExecutor {
 		String dsId = args.get(0);
 		Map<String,String> argMap = FStream.from(args)
 											.drop(1)
-											.map(KeyValue::parse)
-											.toMap(KeyValue::key, KeyValue::value);
+											.toKeyValueStream(KeyValue::parse)
+											.toMap();
 		String countStr = argMap.get("workers");
 		
 		DataSet ds = m_marmot.getDataSet(dsId);

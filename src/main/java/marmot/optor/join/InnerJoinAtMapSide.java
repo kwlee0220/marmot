@@ -155,7 +155,8 @@ public class InnerJoinAtMapSide extends AbstractRecordSetFunction
 			return m_marmot.getDataSet(m_paramDsId)
 							.read()
 							.fstream()
-							.groupByKey(r -> RecordKey.from(m_paramJoinKeys, r))
+							.tagKey(r -> RecordKey.from(m_paramJoinKeys, r))
+							.groupByKey()
 							.asMap();
 		}
 	}

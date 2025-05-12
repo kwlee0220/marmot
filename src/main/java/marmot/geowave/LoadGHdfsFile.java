@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import com.forcewave.ghdfs.obj.GMetaObject;
 import com.forcewave.ghdfs.reader.GHDFSReader;
 
-import utils.func.Tuple;
+import utils.Tuple;
 import utils.stream.FStream;
 
 import marmot.MarmotCore;

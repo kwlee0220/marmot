@@ -114,7 +114,8 @@ public class LeftOuterJoinAtMapSide extends AbstractRecordSetFunction
 			RecordSet paramRSet = join.m_marmot.getDataSet(join.m_paramDsId).read();
 			m_emptyParamRecord = DefaultRecord.of(paramRSet.getRecordSchema());
 			m_lut = paramRSet.fstream()
-							.groupByKey(r -> RecordKey.from(m_paramJoinCols, r))
+							.tagKey(r -> RecordKey.from(m_paramJoinCols, r))
+							.groupByKey()
 							.asMap();
 			m_paramMatchIter = Collections.emptyIterator();
 		}

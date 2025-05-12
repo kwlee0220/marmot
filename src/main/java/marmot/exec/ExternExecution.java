@@ -52,7 +52,7 @@ class ExternExecution extends AbstractMarmotExecution<ExternAnalysis> implements
 //		CompletableFuture.runAsync(new OutputSuppressor(proc.getInputStream()), m_exector);
 //		CompletableFuture.runAsync(new OutputSuppressor(proc.getErrorStream()), m_exector);
 
-		m_guard.runAndSignalAll(() -> m_proc = proc);
+		m_guard.run(() -> m_proc = proc);
 	}
 
 	@Override
@@ -106,13 +106,13 @@ class ExternExecution extends AbstractMarmotExecution<ExternAnalysis> implements
 
 	@Override
 	public void waitForFinished() throws InterruptedException {
-		m_guard.awaitUntil(() -> m_proc != null);
+		m_guard.awaitCondition(() -> m_proc != null).andReturn();
 		m_proc.waitFor();
 	}
 
 	@Override
 	public boolean waitForFinished(long timeout, TimeUnit unit) throws InterruptedException {
-		m_guard.awaitUntil(() -> m_proc != null);
+		m_guard.awaitCondition(() -> m_proc != null).andReturn();
 		return m_proc.waitFor(timeout, unit);
 	}
 	
