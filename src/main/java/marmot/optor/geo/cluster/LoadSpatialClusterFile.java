@@ -55,8 +55,8 @@ public class LoadSpatialClusterFile extends AbstractRecordSetLoader
 	private FOption<Envelope> m_range = FOption.empty();
 	private LoadOptions m_options = LoadOptions.DEFAULT;
 	
-	@Nullable private SpatialClusterFile m_scFile;	// set when initialized
-	@Nullable private FOption<Envelope> m_range84;	// set when initialized
+	private @Nullable SpatialClusterFile m_scFile;	// set when initialized
+	private @Nullable FOption<Envelope> m_range84;	// set when initialized
 	
 	public LoadSpatialClusterFile(Path path) {
 		m_path = path;

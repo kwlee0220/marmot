@@ -61,8 +61,8 @@ public class LoadSpatialIndexedFile extends AbstractRecordSetLoader
 	private FOption<Envelope> m_range = FOption.empty();
 	private LoadOptions m_options = LoadOptions.DEFAULT;
 	
-	@Nullable private DataSetImpl m_ds;					// initialize() 호출시 설정됨
-	@Nullable private SpatialIndexedFile m_idxFile;	// initialize() 호출시 설정됨
+	private @Nullable DataSetImpl m_ds;					// initialize() 호출시 설정됨
+	private @Nullable SpatialIndexedFile m_idxFile;	// initialize() 호출시 설정됨
 	@Nullable FOption<Envelope> m_range84 = null;
 	
 	public LoadSpatialIndexedFile(String dsId) {

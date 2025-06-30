@@ -30,7 +30,7 @@ public class MBRTaggedOpaqueTransform extends RecordLevelTransform
 															.addColumn("length", DataType.INT)
 															.build();
 	private final GeometryColumnInfo m_gcInfo;
-	@Nullable private final Envelope m_validBounds;
+	private final @Nullable Envelope m_validBounds;
 	private final CoordinateTransform m_trans;
 	
 	private int m_geomColIdx = -1;

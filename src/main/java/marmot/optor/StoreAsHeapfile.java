@@ -44,11 +44,11 @@ public class StoreAsHeapfile extends AbstractRecordSetConsumer
 										ProgressReportable, PBSerializable<StoreAsHeapfileProto> {
 	private final Path m_rootPath;
 	private final MarmotFileWriteOptions m_opts;
-	@Nullable private GeometryColumnInfo m_gcInfo = null;
+	private @Nullable GeometryColumnInfo m_gcInfo = null;
 
 	private Path m_outputPath;				// 실제 저장될 파일의 경
 	private volatile RecordSet m_inputRSet;	// 저장에 사용되고 있는 RecordSet
-	@Nullable private volatile MarmotSequenceFile.Store m_store = null;
+	private @Nullable volatile MarmotSequenceFile.Store m_store = null;
 	private volatile StopWatch m_watch;
 	
 	private boolean m_isConsuming;

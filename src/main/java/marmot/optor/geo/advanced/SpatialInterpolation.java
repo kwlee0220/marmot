@@ -39,12 +39,12 @@ public class SpatialInterpolation extends SpatialKnnJoin<SpatialInterpolation>
 										implements PBSerializable<InterpolateSpatiallyProto> {
 	private final String m_valueColumns;
 	private final String m_outColumns;
-	@Nullable private final String m_methodId;		// m_methodId 또는 m_function은 null이 아님
+	private final @Nullable String m_methodId;		// m_methodId 또는 m_function은 null이 아님
 	
 	private int[] m_valueColIdxes;		// set during initialization
 	private int[] m_outColIdxes;		// set during initialization
-	@Nullable private InterpolationMethod m_method;	// m_method 또는 m_interpolator은 null이 아님
-	@Nullable private UserDefinedInterpolation m_interpolator;
+	private @Nullable InterpolationMethod m_method;	// m_method 또는 m_interpolator은 null이 아님
+	private @Nullable UserDefinedInterpolation m_interpolator;
 
 	public SpatialInterpolation(String geomColumn, String paramDsId, String valueColumns,
 								double radius, FOption<Integer> topK, String outColumns,

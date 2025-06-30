@@ -49,7 +49,7 @@ public class AttachQuadKey extends FlatTransform implements PBSerializable<Attac
 	private int m_geomIdx;
 	private int m_quadKeyColIdx;
 	private int m_mbrColIdx;
-	@Nullable private CoordinateTransform m_trans;
+	private @Nullable CoordinateTransform m_trans;
 	
 	public AttachQuadKey(GeometryColumnInfo gcInfo, Set<String> qkeys, FOption<Envelope> validRange,
 							boolean bindOutlier, boolean bindOnlyToOwner) {
