@@ -110,10 +110,10 @@ class ProcessPlanExecution extends PlanExecution
 	private Process createAndStartProcess() throws IOException {
 		m_proc = new ProcessBuilder(m_command).start();
 		
-		IOUtils.copy(m_proc.getInputStream(), System.out)
-				.closeInputStreamOnFinished(true).start();
-		IOUtils.copy(m_proc.getErrorStream(), System.err)
-				.closeInputStreamOnFinished(true).start();
+		IOUtils.copyAsync(m_proc.getInputStream(), System.out)
+				.start();
+		IOUtils.copyAsync(m_proc.getErrorStream(), System.err)
+				.start();
 		
 		new PlanStdinSupplier(m_proc.getOutputStream(), m_plan, m_opts).start();
 		
