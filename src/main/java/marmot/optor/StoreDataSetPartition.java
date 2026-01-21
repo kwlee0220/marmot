@@ -11,6 +11,9 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
 
+import utils.UnitUtils;
+import utils.Utilities;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -30,8 +33,6 @@ import marmot.optor.support.AbstractRecordSetFunction;
 import marmot.proto.optor.StoreDataSetPartitionProto;
 import marmot.rset.ReducerRecordSet;
 import marmot.support.PBSerializable;
-import utils.UnitUtils;
-import utils.Utilities;
 
 /**
  * 
@@ -103,7 +104,7 @@ public class StoreDataSetPartition extends AbstractRecordSetFunction
 		checkInitialized();
 		
 		HdfsPath path = HdfsPath.of(getMarmotCore().getHadoopConfiguration(), m_partitionPath);
-		GeometryColumnInfo gcInfo = m_opts.geometryColumnInfo().getOrNull();
+		GeometryColumnInfo gcInfo = m_opts.geometryColumnInfo().orElse(null);
 		MarmotFileWriteOptions opts = m_opts.writeOptions();
 		
 		return new ReducerRecordSet(input) {
@@ -128,14 +129,12 @@ public class StoreDataSetPartition extends AbstractRecordSetFunction
 	@Override
 	public String toString() {
 		String blkStr = (m_marmot != null)
-						? m_opts.blockSize().orElse(m_marmot.getDefaultMarmotBlockSize())
-								.map(UnitUtils::toByteSizeString)
-								.get()
+						? UnitUtils.toByteSizeString(m_opts.blockSize().orElse(m_marmot.getDefaultMarmotBlockSize()))
 						: m_opts.blockSize().map(UnitUtils::toByteSizeString)
-								.getOrElse("default");
+								.orElse("default");
 		String codecStr = m_opts.compressionCodecName()
 								.map(codec -> ", compress=" + codec)
-								.getOrElse("");
+								.orElse("");
 		return String.format("%s: path=%s%s, block=%s", getClass().getSimpleName(), m_partitionPath,
 								codecStr, blkStr);
 	}

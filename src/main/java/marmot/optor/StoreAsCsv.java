@@ -16,6 +16,9 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 
+import utils.Utilities;
+import utils.func.FOption;
+
 import marmot.MarmotCore;
 import marmot.RecordSchema;
 import marmot.RecordSet;
@@ -30,8 +33,6 @@ import marmot.optor.support.AbstractRecordSetConsumer;
 import marmot.proto.optor.StoreAsCsvProto;
 import marmot.support.HadoopUtils;
 import marmot.support.PBSerializable;
-import utils.Utilities;
-import utils.func.FOption;
 
 
 /**
@@ -136,7 +137,7 @@ public class StoreAsCsv extends AbstractRecordSetConsumer
 								.getOrElse(fsdos);
 		return m_options.charset()
 						.map(cs -> new OutputStreamWriter(out, cs))
-						.getOrElse(()-> new OutputStreamWriter(out));
+						.orElseGet(()-> new OutputStreamWriter(out));
 	}
 
 	public static StoreAsCsv fromProto(StoreAsCsvProto proto) {

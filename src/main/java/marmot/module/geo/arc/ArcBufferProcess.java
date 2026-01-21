@@ -7,6 +7,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import utils.UnitUtils;
+import utils.func.Optionals;
+
 import marmot.MarmotCore;
 import marmot.Plan;
 import marmot.PlanBuilder;
@@ -17,7 +20,6 @@ import marmot.dataset.GeometryColumnInfo;
 import marmot.module.MarmotModule;
 import marmot.optor.StoreDataSetOptions;
 import marmot.plan.Group;
-import utils.UnitUtils;
 
 /**
  * 
@@ -58,9 +60,9 @@ public class ArcBufferProcess implements MarmotModule {
 		GeometryColumnInfo gcInfo = m_marmot.getDataSet(m_params.getInputDataset())
 											.getGeometryColumnInfo();
 		StoreDataSetOptions opts = StoreDataSetOptions.GEOMETRY(gcInfo);
-		opts = m_params.getForce().transform(opts, StoreDataSetOptions::force);
-		opts = m_params.getCompressionCodecName().transform(opts, StoreDataSetOptions::compressionCodecName);
-		opts = m_params.getBlockSize().transform(opts, StoreDataSetOptions::blockSize);
+		opts = Optionals.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
+		opts = Optionals.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
+		opts = Optionals.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
 		
 		if ( !m_params.getDissolve() ) {
 			builder.store(m_params.getOutputDataset(), opts);
@@ -84,7 +86,7 @@ public class ArcBufferProcess implements MarmotModule {
 			output = collapsed;
 		}
 		
-		if ( m_params.getForce().getOrElse(false) ) {
+		if ( m_params.getForce().orElse(false) ) {
 			m_marmot.deleteDataSet(m_params.getOutputDataset());
 		}
 		m_marmot.moveDataSet(output.getId(), m_params.getOutputDataset());

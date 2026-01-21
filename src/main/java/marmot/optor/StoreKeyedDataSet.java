@@ -1,5 +1,6 @@
 package marmot.optor;
 
+import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -9,6 +10,11 @@ import org.locationtech.jts.geom.Geometry;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Preconditions;
+
+import utils.Utilities;
+import utils.func.FOption;
+import utils.stream.FStream;
+import utils.thread.RecurringScheduleThread;
 
 import marmot.Column;
 import marmot.MarmotCore;
@@ -27,10 +33,6 @@ import marmot.rset.AbstractRecordSet;
 import marmot.support.PBSerializable;
 import marmot.support.PeriodicProgressReporter;
 import marmot.support.ProgressReportable;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.stream.FStream;
-import utils.thread.RecurringScheduleThread;
 
 /**
  * 
@@ -120,7 +122,7 @@ public class StoreKeyedDataSet extends AbstractRecordSetConsumer
 	
 	@Override
 	public String toString() {
-		String geomStr = m_options.geometryColumnInfo().map(i -> ", geom=" + i).getOrElse("");
+		String geomStr = m_options.geometryColumnInfo().map(i -> ", geom=" + i).orElse("");
 		return String.format("store_keyed_dataset[id=%s%s, count=%d]", m_dsId, geomStr, m_count);
 	}
 
@@ -146,7 +148,7 @@ public class StoreKeyedDataSet extends AbstractRecordSetConsumer
 		private long m_count;
 		private Envelope m_bounds;
 		
-		GeomInfoCollectingRecordSet(RecordSet src, FOption<GeometryColumnInfo> geomInfo) {
+		GeomInfoCollectingRecordSet(RecordSet src, Optional<GeometryColumnInfo> geomInfo) {
 			m_src = src;
 			
 			if ( geomInfo.isPresent() ) {

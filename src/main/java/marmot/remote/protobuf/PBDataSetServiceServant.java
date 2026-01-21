@@ -1,6 +1,7 @@
 package marmot.remote.protobuf;
 
 import java.io.InputStream;
+import java.util.Optional;
 
 import org.locationtech.jts.geom.Envelope;
 import org.slf4j.Logger;
@@ -10,6 +11,10 @@ import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import io.grpc.stub.StreamObserver;
+
+import utils.Throwables;
+import utils.io.Lz4Compressions;
+
 import marmot.BindDataSetOptions;
 import marmot.MarmotCore;
 import marmot.MarmotInternalException;
@@ -60,9 +65,6 @@ import marmot.proto.service.UpdateGeometryColumnInfoRequest;
 import marmot.proto.service.VoidResponse;
 import marmot.protobuf.PBRecordProtos;
 import marmot.protobuf.PBUtils;
-import utils.Throwables;
-import utils.func.FOption;
-import utils.io.Lz4Compressions;
 
 /**
  * 
@@ -404,14 +406,14 @@ public class PBDataSetServiceServant<T extends MarmotCore> extends DataSetServic
     public void updateGeometryColumnInfo(UpdateGeometryColumnInfoRequest req,
             							StreamObserver<DataSetInfoResponse> resp) {
 		try {
-			FOption<GeometryColumnInfo> newGcInfo;
+			Optional<GeometryColumnInfo> newGcInfo;
 			switch ( req.getOptionalGeometryColumnInfoCase() ) {
 				case GC_INFO:
 					GeometryColumnInfo info = GeometryColumnInfo.fromProto(req.getGcInfo());
-					newGcInfo = FOption.of(info);
+					newGcInfo = Optional.of(info);
 					break;
 				case OPTIONALGEOMETRYCOLUMNINFO_NOT_SET:
-					newGcInfo = FOption.empty();
+					newGcInfo = Optional.empty();
 					break;
 				default:
 					throw new AssertionError();

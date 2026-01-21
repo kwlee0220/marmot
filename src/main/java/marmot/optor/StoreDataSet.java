@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.apache.hadoop.fs.Path;
 
+import utils.Utilities;
+
 import marmot.MarmotCore;
 import marmot.RecordSchema;
 import marmot.RecordSet;
@@ -11,7 +13,6 @@ import marmot.dataset.DataSetImpl;
 import marmot.proto.optor.StoreDataSetProto;
 import marmot.support.PBSerializable;
 import marmot.support.RecordSetOperatorChain;
-import utils.Utilities;
 
 /**
  * 
@@ -27,7 +28,7 @@ public class StoreDataSet extends CompositeRecordSetConsumer
 	public StoreDataSet(String dsId, StoreDataSetOptions opts) {
 		Utilities.checkNotNullArgument(dsId, "target dataset is null");
 		Utilities.checkNotNullArgument(opts, "StoreDataSetOptions is null");
-		Utilities.checkArgument(!(opts.append().getOrElse(false) && opts.force()),
+		Utilities.checkArgument(!(opts.append().orElse(false) && opts.force()),
 								() -> "Both 'append' and 'force' should not be true");
 		
 		m_dsId = dsId;
@@ -49,7 +50,7 @@ public class StoreDataSet extends CompositeRecordSetConsumer
 				m_ds = null;
 				m_deleted = true;
 			}
-			if ( !m_options.append().getOrElse(false) ) {
+			if ( !m_options.append().orElse(false) ) {
 				m_ds = marmot.createDataSet(m_dsId, inputSchema, m_options.toCreateOptions());
 			}
 			else if ( m_ds == null ) {

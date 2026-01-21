@@ -14,12 +14,13 @@ import org.locationtech.jts.geom.Envelope;
 
 import com.google.common.collect.Lists;
 
+import utils.Size2i;
+
 import marmot.MarmotCore;
 import marmot.dataset.GeometryColumnInfo;
 import marmot.geo.catalog.DataSetInfo;
 import marmot.io.RecordWritable;
 import marmot.type.DataType;
-import utils.Size2i;
 
 /**
  * 
@@ -44,7 +45,7 @@ public class HexagonGridFileInputFormat extends FileInputFormat<NullWritable, Re
 			DataSetInfo info = marmot.getDataSetInfo(dataset);
 			srid = info.getGeometryColumnInfo()
 						.map(GeometryColumnInfo::srid)
-						.getOrElse(srid);
+						.orElse(srid);
 			bounds = info.getBounds();
 		}
 		Size2i partDim = getPartionDimension(conf);

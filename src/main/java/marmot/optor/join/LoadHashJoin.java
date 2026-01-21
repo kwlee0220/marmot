@@ -9,6 +9,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import utils.CSV;
+import utils.Utilities;
+import utils.stream.FStream;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.RecordSchema;
@@ -30,9 +34,6 @@ import marmot.proto.optor.LoadHashJoinProto;
 import marmot.support.PBSerializable;
 import marmot.support.RecordSetOperatorChain;
 import marmot.type.DataType;
-import utils.CSV;
-import utils.Utilities;
-import utils.stream.FStream;
 
 /**
  * 
@@ -162,7 +163,7 @@ public class LoadHashJoin extends AbstractRecordSetLoader
 			
 		joint.setMapOutputKey(MarmotMapOutputKeyColumns.fromGroupKey(m_joinKey,
 																TagLoadedJoinKeyColumns.ORDER_KEY));
-		joint.setReducerCount(m_opts.workerCount().getOrElse(m_marmot.getDefaultPartitionCount()));
+		joint.setReducerCount(m_opts.workerCount().orElse(m_marmot.getDefaultPartitionCount()));
 		if ( joint.getReducerCount() > 1 ) {
 			// partitioning할 때는 추가된 키 값을 사용하지 않기 위해 별도의 Partitioner를 사용한다.
 			joint.setPartitionerClass(EquiJoinPartitioner.class);

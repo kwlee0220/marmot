@@ -5,6 +5,10 @@ import java.util.Map;
 
 import com.google.common.base.Objects;
 
+import utils.CSV;
+import utils.func.Optionals;
+import utils.stream.FStream;
+
 import marmot.MarmotCore;
 import marmot.Plan;
 import marmot.RecordSchema;
@@ -15,8 +19,6 @@ import marmot.dataset.GeometryColumnInfo;
 import marmot.module.MarmotModule;
 import marmot.optor.StoreDataSetOptions;
 import marmot.plan.LoadOptions;
-import utils.CSV;
-import utils.stream.FStream;
 
 
 /**
@@ -50,9 +52,9 @@ public class ArcMergeProcess implements MarmotModule {
 	@Override
 	public void run() {
 		StoreDataSetOptions opts = StoreDataSetOptions.DEFAULT;
-		opts = m_params.getForce().transform(opts, StoreDataSetOptions::force);
-		opts = m_params.getCompressionCodecName().transform(opts, StoreDataSetOptions::compressionCodecName);
-		opts = m_params.getBlockSize().transform(opts, StoreDataSetOptions::blockSize);
+		opts = Optionals.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
+		opts = Optionals.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
+		opts = Optionals.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
 
 		m_inputDatasets = checkInputDatasets(m_marmot, m_params);
 		DataSet first = m_inputDatasets.get(0);

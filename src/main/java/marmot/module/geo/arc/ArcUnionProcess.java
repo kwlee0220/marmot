@@ -3,6 +3,9 @@ package marmot.module.geo.arc;
 import java.util.List;
 import java.util.Map;
 
+import utils.CSV;
+import utils.func.Optionals;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Plan;
@@ -14,7 +17,6 @@ import marmot.optor.StoreDataSetOptions;
 import marmot.proto.optor.ArcUnionPhase1Proto;
 import marmot.proto.optor.OperatorProto;
 import marmot.type.DataType;
-import utils.CSV;
 
 /**
  * 
@@ -51,9 +53,9 @@ public class ArcUnionProcess implements MarmotModule {
 		DataSet right = validateGeometry(m_marmot, m_params.getRightDataSet());
 		
 		StoreDataSetOptions opts = StoreDataSetOptions.GEOMETRY(left.getGeometryColumnInfo());
-		opts = m_params.getForce().transform(opts, StoreDataSetOptions::force);
-		opts = m_params.getCompressionCodecName().transform(opts, StoreDataSetOptions::compressionCodecName);
-		opts = m_params.getBlockSize().transform(opts, StoreDataSetOptions::blockSize);
+		opts = Optionals.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
+		opts = Optionals.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
+		opts = Optionals.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
 		
 		String geomCol = left.getGeometryColumn();
 		String rightGeomCol = right.getGeometryColumn();
@@ -118,9 +120,9 @@ public class ArcUnionProcess implements MarmotModule {
 	
 	private void performLeftOuterJoin(DataSet left, DataSet right) {
 		StoreDataSetOptions opts = StoreDataSetOptions.GEOMETRY(left.getGeometryColumnInfo());
-		opts = m_params.getForce().transform(opts, StoreDataSetOptions::force);
-		opts = m_params.getCompressionCodecName().transform(opts, StoreDataSetOptions::compressionCodecName);
-		opts = m_params.getBlockSize().transform(opts, StoreDataSetOptions::blockSize);
+		opts = Optionals.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
+		opts = Optionals.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
+		opts = Optionals.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
 		
 		String geomCol = left.getGeometryColumn();
 		ArcUnionPhase1Proto phase1 = ArcUnionPhase1Proto.newBuilder()

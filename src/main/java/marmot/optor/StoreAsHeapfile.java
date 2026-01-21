@@ -12,6 +12,10 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.StopWatch;
+import utils.Throwables;
+import utils.Utilities;
+
 import marmot.MarmotCore;
 import marmot.RecordSchema;
 import marmot.RecordSet;
@@ -29,9 +33,6 @@ import marmot.optor.support.AbstractRecordSetConsumer;
 import marmot.proto.optor.StoreAsHeapfileProto;
 import marmot.support.PBSerializable;
 import marmot.support.ProgressReportable;
-import utils.StopWatch;
-import utils.Throwables;
-import utils.Utilities;
 
 
 /**
@@ -162,6 +163,6 @@ public class StoreAsHeapfile extends AbstractRecordSetConsumer
 	}
 	
 	private long getBlockSize(MarmotCore marmot) {
-		return m_opts.blockSize().getOrElse(marmot.getDefaultMarmotBlockSize());
+		return m_opts.blockSize().orElse(marmot.getDefaultMarmotBlockSize());
 	}
 }

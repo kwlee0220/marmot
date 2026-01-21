@@ -6,6 +6,8 @@ import org.apache.hadoop.mapreduce.lib.partition.HashPartitioner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.StopWatch;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -29,7 +31,6 @@ import marmot.proto.optor.StoreSpatialClusterPackProto;
 import marmot.rset.AbstractRecordSet;
 import marmot.support.PBSerializable;
 import marmot.support.ProgressReportable;
-import utils.StopWatch;
 
 
 /**
@@ -79,7 +80,7 @@ public class StoreSpatialClusterPack extends AbstractRecordSetFunction
 		}
 		
 		long blkSize = m_marmot.getDefaultBlockSize(DataSetType.SPATIAL_CLUSTER);
-		return new ClusterInfoCollecteds(this, groups, m_opts.blockSize().getOrElse(blkSize));
+		return new ClusterInfoCollecteds(this, groups, m_opts.blockSize().orElse(blkSize));
 	}
 
 	@Override

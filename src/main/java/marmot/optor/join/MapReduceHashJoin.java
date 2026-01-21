@@ -7,6 +7,9 @@ import java.util.stream.IntStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.CSV;
+import utils.Utilities;
+
 import marmot.MarmotCore;
 import marmot.Plan;
 import marmot.RecordSchema;
@@ -21,8 +24,6 @@ import marmot.proto.optor.MapReduceEquiJoinProto;
 import marmot.support.PBSerializable;
 import marmot.support.RecordSetOperatorChain;
 import marmot.type.DataType;
-import utils.CSV;
-import utils.Utilities;
 
 /**
  * 
@@ -112,7 +113,7 @@ public class MapReduceHashJoin extends CompositeRecordSetFunction
 		String joinColsExpr = IntStream.range(0, inJoinCols.size())
 										.mapToObj(idx -> String.format("jc%02d", idx))
 										.collect(Collectors.joining(","));
-		int workerCount = m_options.workerCount().getOrElse(m_marmot.getDefaultPartitionCount());
+		int workerCount = m_options.workerCount().orElse(m_marmot.getDefaultPartitionCount());
 		
 		Plan plan;
 		plan = Plan.builder("compose")

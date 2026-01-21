@@ -26,6 +26,13 @@ import org.slf4j.LoggerFactory;
 
 import com.forcewave.ghdfs.obj.GMetaObject;
 
+import utils.StopWatch;
+import utils.Throwables;
+import utils.UnitUtils;
+import utils.Utilities;
+import utils.func.FOption;
+import utils.stream.FStream;
+
 import marmot.dataset.Catalog;
 import marmot.dataset.Catalogs;
 import marmot.dataset.DataSet;
@@ -62,12 +69,6 @@ import marmot.remote.protobuf.PBSerializableRegistry;
 import marmot.support.PBException;
 import marmot.support.PBSerializable;
 import marmot.support.RecordSetOperatorChain;
-import utils.StopWatch;
-import utils.Throwables;
-import utils.UnitUtils;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.stream.FStream;
 
 
 /**
@@ -272,7 +273,7 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 		DataSetInfo dsInfo = new DataSetInfo(dsId, opts.type(), schema);
 		dsInfo.setGeometryColumnInfo(opts.geometryColumnInfo());
 		dsInfo.setBlockSize(opts.blockSize()
-								.getOrElse(() -> getDefaultBlockSize(DataSetType.FILE)));
+								.orElseGet(() -> getDefaultBlockSize(DataSetType.FILE)));
 		dsInfo.setCompressionCodecName(opts.compressionCodecName());
 		dsInfo.setUpdatedMillis(System.currentTimeMillis());
 		m_catalog.initialize(dsInfo);

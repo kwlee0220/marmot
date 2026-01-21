@@ -6,6 +6,10 @@ import org.apache.hadoop.fs.Path;
 
 import com.google.common.collect.Maps;
 
+import utils.CSV;
+import utils.func.Either;
+import utils.func.Optionals;
+
 import marmot.MarmotCore;
 import marmot.Plan;
 import marmot.RecordSchema;
@@ -19,8 +23,6 @@ import marmot.optor.UpdateDataSetInfo;
 import marmot.proto.optor.ClusterSpatiallyProto;
 import marmot.support.PBSerializable;
 import marmot.support.RecordSetOperatorChain;
-import utils.CSV;
-import utils.func.Either;
 
 /**
  * 
@@ -47,10 +49,10 @@ public class ClusterSpatially extends CompositeRecordSetConsumer
 	@Override
 	protected void _initialize(MarmotCore marmot, RecordSchema inputSchema) {
 		if ( m_quadKeyInfo.left().isPresent() ) {
-			m_quadKeyList = CSV.parseCsv(m_quadKeyInfo.left().getUnchecked()).toList();
+			m_quadKeyList = CSV.parseCsv(m_quadKeyInfo.left().get()).toList();
 		}
 		else {
-			m_quadKeyList = marmot.getDataSet(m_quadKeyInfo.right().getUnchecked())
+			m_quadKeyList = marmot.getDataSet(m_quadKeyInfo.right().get())
 									.getClusterQuadKeyAll();
 		}
 		m_partCount = m_options.partitionCount().getOrElse(marmot.getDefaultPartitionCount());
@@ -64,7 +66,7 @@ public class ClusterSpatially extends CompositeRecordSetConsumer
 		
 		MarmotFileWriteOptions writeOpts = MarmotFileWriteOptions.FORCE(m_options.force())
 													.blockSize(m_options.blockSize());
-		Map<String,String> meta = writeOpts.metaData().getOrElse(Maps.newHashMap());
+		Map<String,String> meta = writeOpts.metaData().orElse(Maps.newHashMap());
 		meta.put(SpatialClusterFile.PROP_DATASET_SCHEMA, getRecordSchema().toString());
 		meta.put(SpatialClusterFile.PROP_GEOM_COL, m_gcInfo.name());
 		meta.put(SpatialClusterFile.PROP_SRID, m_gcInfo.srid());
@@ -119,8 +121,9 @@ public class ClusterSpatially extends CompositeRecordSetConsumer
 															.setOutDsId(m_outDsId)
 															.setGeometryColumnInfo(m_gcInfo.toProto())
 															.setOptions(m_options.toProto());
-		builder = m_quadKeyInfo.left().transform(builder, (b,l) -> b.setQuadKeyList(l));
-		builder = m_quadKeyInfo.right().transform(builder, (b,id) -> b.setQuadKeyDsId(id));
+		
+		Optionals.transform(m_quadKeyInfo.left(), builder, (b,l) -> b.setQuadKeyList(l));
+		Optionals.transform(m_quadKeyInfo.right(), builder, (b,id) -> b.setQuadKeyDsId(id));
 		return builder.build();
 	}
 }

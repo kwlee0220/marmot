@@ -2,6 +2,7 @@ package marmot.dataset;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.apache.hadoop.conf.Configuration;
@@ -10,6 +11,14 @@ import org.apache.hadoop.fs.Path;
 import org.locationtech.jts.geom.Envelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import utils.Throwables;
+import utils.UnitUtils;
+import utils.Utilities;
+import utils.func.FOption;
+import utils.func.Optionals;
+import utils.func.UncheckedFunction;
+import utils.stream.FStream;
 
 import marmot.GRecordSchema;
 import marmot.MarmotCore;
@@ -48,12 +57,6 @@ import marmot.optor.geo.cluster.SplitQuadSpace;
 import marmot.plan.Group;
 import marmot.plan.LoadOptions;
 import marmot.support.EnvelopeTaggedRecord;
-import utils.Throwables;
-import utils.UnitUtils;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.func.UncheckedFunction;
-import utils.stream.FStream;
 
 /**
  * 
@@ -115,7 +118,7 @@ public class DataSetImpl implements DataSet {
 	@Override
 	public GeometryColumnInfo getGeometryColumnInfo() {
 		return m_info.getGeometryColumnInfo()
-						.getOrThrow(NoGeometryColumnException::new);
+						.orElseThrow(NoGeometryColumnException::new);
 	}
 
 	@Override
@@ -144,7 +147,7 @@ public class DataSetImpl implements DataSet {
 	}
 
 	@Override
-	public FOption<String> getCompressionCodecName() {
+	public Optional<String> getCompressionCodecName() {
 		return m_info.getCompressionCodecName();
 	}
 
@@ -168,7 +171,7 @@ public class DataSetImpl implements DataSet {
 	}
 
 	@Override
-	public DataSet updateGeometryColumnInfo(FOption<GeometryColumnInfo> gcInfo) {
+	public DataSet updateGeometryColumnInfo(Optional<GeometryColumnInfo> gcInfo) {
 		m_info.setGeometryColumnInfo(gcInfo);
 		m_marmot.getCatalog().insertOrReplaceDataSetInfo(m_info);
 		
@@ -194,7 +197,9 @@ public class DataSetImpl implements DataSet {
 		StoreDataSetOptions opts = partId.map(StoreDataSetOptions::APPEND)
 											.getOrElse(StoreDataSetOptions.APPEND)
 											.blockSize(m_info.getBlockSize());
-		opts = m_info.getCompressionCodecName().transform(opts, (o,n) -> o.compressionCodecName(n));
+		if ( m_info.getCompressionCodecName().isPresent() ) {
+			opts = opts.compressionCodecName(m_info.getCompressionCodecName().get());
+		}
 		
 		StoreDataSet store = new StoreDataSet(m_info.getId(), opts);
 		store.initialize(m_marmot, rset.getRecordSchema());
@@ -361,7 +366,7 @@ public class DataSetImpl implements DataSet {
 		}
 		else {
 			long blockSize = opts.blockSize()
-								.getOrElse(m_marmot.getDefaultBlockSize(DataSetType.SPATIAL_CLUSTER));
+								.orElse(m_marmot.getDefaultBlockSize(DataSetType.SPATIAL_CLUSTER));
 			long sampleSize = opts.sampleSize().getOrElse(blockSize);
 			long clusterSize = opts.clusterSize().getOrElse(blockSize);
 			
@@ -407,16 +412,18 @@ public class DataSetImpl implements DataSet {
 	
 	@Override
 	public RangeQueryEstimate estimateRangeQuery(Envelope range) {
-		FOption<CoordinateTransform> toWgs84 = FOption.ofNullable(getCoordinateTransform());
-		FOption<CoordinateTransform> fromWgs84 = FOption.ofNullable(m_rtrans);
-		Envelope rangeWgs84 = toWgs84.transform(range, (r,t) -> t.transform(r));
+		Optional<CoordinateTransform> toWgs84 = Optional.ofNullable(getCoordinateTransform());
+		Optional<CoordinateTransform> fromWgs84 = Optional.ofNullable(m_rtrans);
+		Envelope rangeWgs84 = Optionals.transform(toWgs84, range, (r,t) -> t.transform(r));
 
 		QuadClusterFile<? extends QuadCluster> idxFile = loadOrBuildQuadClusterFile(m_marmot);
 		List<ClusterEstimate> clusterEstimates
 			= idxFile.queryClusters(rangeWgs84)
 						.map(cluster -> {
-							Envelope dataBounds = fromWgs84.transform(cluster.getDataBounds(), (b,t) -> t.transform(b));
-							Envelope quadBounds = fromWgs84.transform(cluster.getQuadBounds(), (b,t) -> t.transform(b));
+							Envelope dataBounds = Optionals.transform(fromWgs84, cluster.getDataBounds(),
+																		(b,t) -> t.transform(b));
+							Envelope quadBounds = Optionals.transform(fromWgs84, cluster.getQuadBounds(),
+																		(b,t) -> t.transform(b));
 							
 							Envelope clusterArea = quadBounds.intersection(dataBounds);
 							Envelope matchingArea = range.intersection(clusterArea);
