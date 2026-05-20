@@ -10,7 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import utils.CSV;
-import utils.Utilities;
+import utils.Preconditions;
 import utils.stream.FStream;
 
 import marmot.Column;
@@ -56,12 +56,12 @@ public class LoadHashJoin extends AbstractRecordSetLoader
 	private LoadHashJoin(String leftDataSet, String leftJoinCols,
 						String rightDataSet, String rightJoinCols,
 						String outputColumns, JoinOptions opts) {
-		Utilities.checkNotNullArgument(leftDataSet, "left dataset id is null");
-		Utilities.checkNotNullArgument(rightDataSet, "right dataset id is null");
-		Utilities.checkNotNullArgument(leftJoinCols, "left join columns");
-		Utilities.checkNotNullArgument(rightJoinCols, "right join columns");
-		Utilities.checkNotNullArgument(outputColumns, "output columns");
-		Utilities.checkNotNullArgument(opts,  "JoinOptions");
+		Preconditions.checkNotNullArgument(leftDataSet, "left dataset id is null");
+		Preconditions.checkNotNullArgument(rightDataSet, "right dataset id is null");
+		Preconditions.checkNotNullArgument(leftJoinCols, "left join columns");
+		Preconditions.checkNotNullArgument(rightJoinCols, "right join columns");
+		Preconditions.checkNotNullArgument(outputColumns, "output columns");
+		Preconditions.checkNotNullArgument(opts,  "JoinOptions");
 		
 		m_leftDsId = leftDataSet;
 		m_rightDsId = rightDataSet;

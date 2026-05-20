@@ -15,6 +15,13 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.slf4j.LoggerFactory;
 
+import utils.LocalDateTimes;
+import utils.LocalDates;
+import utils.LocalTimes;
+import utils.Preconditions;
+import utils.func.FOption;
+import utils.jdbc.JdbcProcessor;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -28,12 +35,6 @@ import marmot.plan.JdbcConnectOptions;
 import marmot.proto.optor.StoreIntoJdbcTableProto;
 import marmot.protobuf.PBUtils;
 import marmot.support.PBSerializable;
-import utils.LocalDateTimes;
-import utils.LocalDates;
-import utils.LocalTimes;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.jdbc.JdbcProcessor;
 
 
 /**
@@ -53,9 +54,9 @@ public class StoreIntoJdbcTable extends AbstractRecordSetConsumer
 	
 	public StoreIntoJdbcTable(String tableName, JdbcConnectOptions jdbcOpts,
 								FOption<String> valuesExpr) {
-		Utilities.checkNotNullArgument(tableName, "tableName is null");
-		Utilities.checkNotNullArgument(tableName, "target table name is null");
-		Utilities.checkNotNullArgument(valuesExpr, "valuesExpr is null");
+		Preconditions.checkNotNullArgument(tableName, "tableName is null");
+		Preconditions.checkNotNullArgument(tableName, "target table name is null");
+		Preconditions.checkNotNullArgument(valuesExpr, "valuesExpr is null");
 
 		m_tableName = tableName;
 		m_jdbcOpts = jdbcOpts;
@@ -86,7 +87,7 @@ public class StoreIntoJdbcTable extends AbstractRecordSetConsumer
 	@Override
 	public void consume(RecordSet rset) {
 		checkInitialized();
-		Utilities.checkNotNullArgument(rset, "rset is null");
+		Preconditions.checkNotNullArgument(rset, "rset is null");
 		
 		String valuesExpr = m_valuesExpr.getOrElse(() -> {
 			StringBuilder valuesBuilder = new StringBuilder();
@@ -102,8 +103,12 @@ public class StoreIntoJdbcTable extends AbstractRecordSetConsumer
 		});
 		String insertStmtStr = String.format("insert into %s %s", m_tableName, valuesExpr);
 
-		JdbcProcessor jdbc = new JdbcProcessor(m_jdbcOpts.jdbcUrl(), m_jdbcOpts.user(),
-												m_jdbcOpts.passwd(), m_jdbcOpts.driverClassName());
+		JdbcProcessor jdbc = JdbcProcessor.builder()
+											.jdbcUrl(m_jdbcOpts.jdbcUrl())
+											.user(m_jdbcOpts.user())
+											.password(m_jdbcOpts.passwd())
+											.driverClassName(m_jdbcOpts.driverClassName())
+											.build();
 
 		AtomicInteger count = new AtomicInteger(0);
 		try ( Connection conn = jdbc.connect() ) {

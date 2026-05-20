@@ -2,13 +2,14 @@ package marmot.optor;
 
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+
 import marmot.Record;
 import marmot.RecordFlatTransform;
 import marmot.RecordSet;
 import marmot.optor.rset.SingleInputRecordSet;
 import marmot.optor.support.AbstractRecordSetFunction;
 import marmot.rset.FlatTransformedRecordSet;
-import utils.Utilities;
 
 /**
  * 
@@ -23,7 +24,7 @@ public abstract class FlatTransform extends AbstractRecordSetFunction
 	@Override
 	public RecordSet apply(RecordSet input) {
 		checkInitialized();
-		Utilities.checkNotNullArgument(input, "input is null");
+		Preconditions.checkNotNullArgument(input, "input is null");
 		
 		return new FlatTransformed(this, input);
 	}

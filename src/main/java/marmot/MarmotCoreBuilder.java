@@ -12,8 +12,8 @@ import org.apache.hadoop.util.ToolRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
 import utils.Tuple;
-import utils.Utilities;
 import utils.func.FOption;
 
 /**
@@ -31,13 +31,13 @@ public class MarmotCoreBuilder {
 	private boolean m_runAtCluster = false;
 	
 	public MarmotCoreBuilder setHomeDir(File dir) {
-		Utilities.checkArgument(dir.isDirectory(), "HomeDir is not a directory: " + dir);
+		Preconditions.checkArgument(dir.isDirectory(), "HomeDir is not a directory: " + dir);
 		
 		return setConfigDir(new File(dir, HADOOP_CONFIG));
 	}
 	
 	public MarmotCoreBuilder setConfigDir(File dir) {
-		Utilities.checkArgument(dir.isDirectory(), "ConfigDir is not a directory: " + dir);
+		Preconditions.checkArgument(dir.isDirectory(), "ConfigDir is not a directory: " + dir);
 		
 		m_configDir = FOption.of(dir);
 		return this;
@@ -66,7 +66,7 @@ public class MarmotCoreBuilder {
 	}
 	
 	public Tuple<MarmotCore,String[]> build(String... args) throws Exception {
-		Utilities.checkNotNullArgument(args != null, "empty arguments");
+		Preconditions.checkNotNullArgument(args != null, "empty arguments");
 		
 		Driver driver = new Driver();
 		ToolRunner.run(driver, args);
@@ -106,7 +106,7 @@ public class MarmotCoreBuilder {
 	
 	private Tuple<MarmotCore,String[]> build(Configuration conf, String[] applArgs)
 		throws Exception {
-		Utilities.checkNotNullArgument(m_runnerMode != null, "runner mode is not specified");
+		Preconditions.checkNotNullArgument(m_runnerMode != null, "runner mode is not specified");
 		
 		if ( !m_runAtCluster && m_configDir.isAbsent() ) {
 			setHomeDir(getHomeDir().getOrThrow(() -> new IllegalStateException("Marmot config directory is not specified")));

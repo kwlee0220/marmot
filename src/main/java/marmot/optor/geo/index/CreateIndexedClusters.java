@@ -7,6 +7,10 @@ import org.apache.hadoop.fs.Path;
 
 import com.google.common.collect.Lists;
 
+import utils.Preconditions;
+import utils.UnitUtils;
+import utils.func.FOption;
+
 import marmot.MarmotCore;
 import marmot.RecordSchema;
 import marmot.RecordSet;
@@ -22,9 +26,6 @@ import marmot.optor.geo.filter.DropEmptyGeometry;
 import marmot.optor.geo.filter.SpatialFilters;
 import marmot.optor.support.AbstractRecordSetFunction;
 import marmot.optor.support.RecordSetOperators;
-import utils.UnitUtils;
-import utils.Utilities;
-import utils.func.FOption;
 
 
 /**
@@ -46,11 +47,11 @@ public class CreateIndexedClusters extends AbstractRecordSetFunction  {
 	
 	public CreateIndexedClusters(GeometryColumnInfo gcInfo, Set<String> qkeys, Path clusterDir,
 								long blockSize, int workerCount) {
-		Utilities.checkNotNullArgument(gcInfo, "GeometryColumnInfo is null");
-		Utilities.checkNotNullArgument(qkeys, "QuadKeys is null");
-		Utilities.checkNotNullArgument(clusterDir, "clusterDir is null");
-		Utilities.checkArgument(blockSize > 0, "invalid block-size: " + blockSize);
-		Utilities.checkArgument(workerCount > 0, "invalid worker-count: " + workerCount);
+		Preconditions.checkNotNullArgument(gcInfo, "GeometryColumnInfo is null");
+		Preconditions.checkNotNullArgument(qkeys, "QuadKeys is null");
+		Preconditions.checkNotNullArgument(clusterDir, "clusterDir is null");
+		Preconditions.checkArgument(blockSize > 0, "invalid block-size: " + blockSize);
+		Preconditions.checkArgument(workerCount > 0, "invalid worker-count: " + workerCount);
 		
 		m_clusterDir = clusterDir;
 		m_gcInfo = gcInfo;

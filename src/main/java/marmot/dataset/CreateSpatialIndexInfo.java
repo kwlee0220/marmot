@@ -1,8 +1,9 @@
 package marmot.dataset;
 
+import utils.Preconditions;
+
 import marmot.proto.CreateSpatialIndexInfoProto;
 import marmot.support.PBSerializable;
-import utils.Utilities;
 
 
 /**
@@ -15,8 +16,8 @@ public final class CreateSpatialIndexInfo implements PBSerializable<CreateSpatia
 	private String m_hdfsPath;
 	
 	public CreateSpatialIndexInfo(String dsId, GeometryColumnInfo geomCol) {
-		Utilities.checkNotNullArgument(dsId, "dataset is null");
-		Utilities.checkNotNullArgument(geomCol, "geomCol is null");
+		Preconditions.checkNotNullArgument(dsId, "dataset is null");
+		Preconditions.checkNotNullArgument(geomCol, "geomCol is null");
 		
 		m_dsId = dsId;
 		m_geomCol = geomCol;

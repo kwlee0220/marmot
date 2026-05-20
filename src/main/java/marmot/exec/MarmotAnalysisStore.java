@@ -12,7 +12,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.hadoop.conf.Configuration;
 
@@ -21,6 +20,7 @@ import com.google.common.collect.Sets;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import utils.CSV;
+import utils.Preconditions;
 import utils.Utilities;
 import utils.func.CheckedFunctionX;
 import utils.func.Try;
@@ -131,7 +131,7 @@ public class MarmotAnalysisStore {
 	}
 
 	public void add(MarmotAnalysis analysis, boolean force) {
-		Utilities.checkNotNullArgument(analysis, "MarmotAnalysis should not be null.");
+		Preconditions.checkNotNullArgument(analysis, "MarmotAnalysis should not be null.");
 
 		String id = analysis.getId();
 		
@@ -306,8 +306,8 @@ public class MarmotAnalysisStore {
 		try ( PreparedStatement pstmt = conn.prepareStatement(SQL_GET_ANALYSIS); ) {
 			pstmt.setString(1, id);
 			
-			return JdbcUtils.stream(pstmt.executeQuery(), s_toAnalysis)
-							.findAny().orElse(null);
+			return JdbcUtils.fstream(pstmt.executeQuery(), s_toAnalysis)
+							.findFirst().getOrNull();
 		}
 	}
 	
@@ -315,8 +315,7 @@ public class MarmotAnalysisStore {
 		try ( PreparedStatement pstmt = conn.prepareStatement(SQL_LIST_ANALYSIS_OF_TYPE); ) {
 			pstmt.setString(1, type.name());
 			
-			return JdbcUtils.stream(pstmt.executeQuery(), s_toAnalysis)
-							.collect(Collectors.toList());
+			return JdbcUtils.fstream(pstmt.executeQuery(), s_toAnalysis).toList();
 		}
 	}
 	
@@ -335,7 +334,7 @@ public class MarmotAnalysisStore {
 		try ( PreparedStatement pstmt = conn.prepareStatement(SQL_GET_DIRECT_SUPER) ) {
 			pstmt.setString(1, String.format("%%;%s;%%", id));
 			
-			return FStream.from(JdbcUtils.stream(pstmt.executeQuery(), s_toAnalysis))
+			return JdbcUtils.fstream(pstmt.executeQuery(), s_toAnalysis)
 							.castSafely(CompositeAnalysis.class)
 							.findFirst()
 							.getOrNull();

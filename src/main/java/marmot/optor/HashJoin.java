@@ -1,5 +1,8 @@
 package marmot.optor;
 
+import utils.CSV;
+import utils.Preconditions;
+
 import marmot.MarmotCore;
 import marmot.RecordSchema;
 import marmot.RecordSetException;
@@ -13,8 +16,6 @@ import marmot.proto.optor.HashJoinProto;
 import marmot.support.PBSerializable;
 import marmot.support.RecordSetOperatorChain;
 import marmot.type.DataType;
-import utils.CSV;
-import utils.Utilities;
 
 /**
  * 
@@ -30,11 +31,11 @@ public class HashJoin extends CompositeRecordSetFunction
 	
 	private HashJoin(String inputJoinCols, String paramDsId,
 					String paramJoinCols, String outputColumns, JoinOptions opts) {
-		Utilities.checkNotNullArgument(inputJoinCols, "input join columns");
-		Utilities.checkNotNullArgument(paramJoinCols, "parameter join columns");
-		Utilities.checkNotNullArgument(paramDsId, "parameter dataset id");
-		Utilities.checkNotNullArgument(outputColumns, "output columns id");
-		Utilities.checkNotNullArgument(opts, "JoinOptions");
+		Preconditions.checkNotNullArgument(inputJoinCols, "input join columns");
+		Preconditions.checkNotNullArgument(paramJoinCols, "parameter join columns");
+		Preconditions.checkNotNullArgument(paramDsId, "parameter dataset id");
+		Preconditions.checkNotNullArgument(outputColumns, "output columns id");
+		Preconditions.checkNotNullArgument(opts, "JoinOptions");
 		
 		m_inputJoinCols = inputJoinCols;
 		m_paramJoinCols = paramJoinCols;

@@ -16,6 +16,11 @@ import org.apache.kafka.common.serialization.LongSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+import utils.StopWatch;
+import utils.func.FOption;
+import utils.stream.FStream;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -30,10 +35,6 @@ import marmot.optor.support.AbstractRecordSetConsumer;
 import marmot.proto.optor.StoreIntoKafkaTopicProto;
 import marmot.support.PBSerializable;
 import marmot.support.ProgressReportable;
-import utils.StopWatch;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.stream.FStream;
 
 
 /**
@@ -54,7 +55,7 @@ public class StoreIntoKafkaTopic extends AbstractRecordSetConsumer
 	private int m_count;
 	
 	public StoreIntoKafkaTopic(String topic) {
-		Utilities.checkNotNullArgument(topic, "topic is null");
+		Preconditions.checkNotNullArgument(topic, "topic is null");
 
 		m_topic = topic;
 		m_clientId = topic;
@@ -84,7 +85,7 @@ public class StoreIntoKafkaTopic extends AbstractRecordSetConsumer
 	@Override
 	public void consume(RecordSet rset) {
 		checkInitialized();
-		Utilities.checkNotNullArgument(rset, "rset is null");
+		Preconditions.checkNotNullArgument(rset, "rset is null");
 		
 		m_count = 0;
 		

@@ -4,6 +4,8 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
 
+import utils.Preconditions;
+
 import marmot.Column;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -12,7 +14,6 @@ import marmot.optor.AggregateType;
 import marmot.support.TypedObject;
 import marmot.type.DataType;
 import marmot.type.TypeCode;
-import utils.Utilities;
 
 /**
  * 
@@ -48,7 +49,7 @@ public class StdDev implements ValueAggregate {
 
 	@Override
 	public void setOutputColumn(String colName) {
-		Utilities.checkNotNullArgument(colName, "colName is null");
+		Preconditions.checkNotNullArgument(colName, "colName is null");
 		
 		m_outColName = colName.toLowerCase();
 	}

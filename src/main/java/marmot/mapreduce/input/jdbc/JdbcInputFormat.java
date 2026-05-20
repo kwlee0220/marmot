@@ -13,12 +13,13 @@ import org.apache.hadoop.mapreduce.TaskAttemptContext;
 
 import com.google.common.collect.Lists;
 
-import marmot.Record;
-import marmot.RecordSchema;
-import marmot.exec.MarmotExecutionException;
 import utils.CSV;
 import utils.func.FOption;
 import utils.jdbc.JdbcProcessor;
+
+import marmot.Record;
+import marmot.RecordSchema;
+import marmot.exec.MarmotExecutionException;
 
 
 /**
@@ -118,7 +119,13 @@ public class JdbcInputFormat extends InputFormat<LongWritable, Record> {
 	}
 	public static final JdbcProcessor fromJdbcProcessorString(String str) {
 		String[] parts = CSV.parseCsv(str).toArray(String.class);
-		return new JdbcProcessor(parts[0], parts[1], parts[2], parts[3]);
+		
+		return JdbcProcessor.builder()
+							.jdbcUrl(parts[0])
+							.user(parts[1])
+							.password(parts[2])
+							.driverClassName(parts[3])
+							.build();
 	}
 	
 	public static final FOption<Integer> getJdbcInputMapperCount(Configuration conf) {

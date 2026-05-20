@@ -2,8 +2,9 @@ package marmot.optor.join;
 
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+
+import utils.Preconditions;
 
 import marmot.Record;
 import marmot.RecordSchema;
@@ -11,7 +12,6 @@ import marmot.RecordSet;
 import marmot.optor.support.colexpr.ColumnSelector;
 import marmot.rset.AbstractRecordSet;
 import marmot.support.DefaultRecord;
-import utils.Utilities;
 
 /**
  * 
@@ -27,9 +27,9 @@ class SingleSidePartitionJoin extends AbstractRecordSet {
 	
 	SingleSidePartitionJoin(RecordSchema leftSchema, RecordSchema rightSchema,
 							RecordSet rset, int dsIdx, ColumnSelector combiner) {
-		Utilities.checkNotNullArgument(rset, "rset is null");
-		Preconditions.checkArgument(dsIdx == 0 || dsIdx == 1);
-		Utilities.checkNotNullArgument(combiner, "combiner is null");
+		Preconditions.checkNotNullArgument(rset, "rset is null");
+		Preconditions.checkArgument(dsIdx == 0 || dsIdx == 1, "dataset index should be zero or one");
+		Preconditions.checkNotNullArgument(combiner, "combiner is null");
 		
 		m_rset = rset;
 		m_dsIdx = dsIdx;

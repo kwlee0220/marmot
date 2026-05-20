@@ -4,6 +4,9 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import utils.Preconditions;
+import utils.Throwables;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -14,8 +17,6 @@ import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
 import marmot.support.RecordMap;
 import marmot.support.RecordScriptExecution;
-import utils.Throwables;
-import utils.Utilities;
 
 
 /**
@@ -35,8 +36,8 @@ public class ScriptRecordTransform extends RecordLevelTransform
 	}
 	
 	public ScriptRecordTransform(RecordSchema outputSchema, RecordScript script) {
-		Utilities.checkNotNullArgument(outputSchema, "outputSchema is null");
-		Utilities.checkNotNullArgument(script, "transform script is null");
+		Preconditions.checkNotNullArgument(outputSchema, "outputSchema is null");
+		Preconditions.checkNotNullArgument(script, "transform script is null");
 		
 		m_outputSchema = outputSchema;
 		m_transform = script;
@@ -47,8 +48,8 @@ public class ScriptRecordTransform extends RecordLevelTransform
 	
 	@Override
 	public void initialize(MarmotCore marmot, RecordSchema inputSchema) {
-		Utilities.checkNotNullArgument(marmot, "marmot is null");
-		Utilities.checkNotNullArgument(inputSchema, "inputSchema is null");
+		Preconditions.checkNotNullArgument(marmot, "marmot is null");
+		Preconditions.checkNotNullArgument(inputSchema, "inputSchema is null");
 		
 		m_transformExec.initialize(m_variables);
 		

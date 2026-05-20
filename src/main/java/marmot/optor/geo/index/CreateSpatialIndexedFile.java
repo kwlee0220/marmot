@@ -7,6 +7,9 @@ import org.apache.hadoop.fs.Path;
 
 import com.google.common.collect.Maps;
 
+import utils.Preconditions;
+import utils.UnitUtils;
+
 import marmot.MarmotCore;
 import marmot.RecordSchema;
 import marmot.dataset.GeometryColumnInfo;
@@ -15,8 +18,6 @@ import marmot.io.geo.index.GlobalIndex;
 import marmot.optor.CompositeRecordSetConsumer;
 import marmot.optor.StoreAsHeapfile;
 import marmot.support.RecordSetOperatorChain;
-import utils.UnitUtils;
-import utils.Utilities;
 
 /**
  * 
@@ -31,11 +32,11 @@ public class CreateSpatialIndexedFile extends CompositeRecordSetConsumer {
 	
 	public CreateSpatialIndexedFile(Path clusterDir, GeometryColumnInfo geomCol, Set<String> qkeys,
 									long blockSize, int workerCount) {
-		Utilities.checkNotNullArgument(clusterDir, "clusterDir is null");
-		Utilities.checkNotNullArgument(qkeys, "qkSource is null");
-		Utilities.checkNotNullArgument(geomCol, "geomCol is null");
-		Utilities.checkArgument(blockSize > 0, "invalid block-size: " + blockSize);
-		Utilities.checkArgument(workerCount > 0, "invalid worker-count: " + workerCount);
+		Preconditions.checkNotNullArgument(clusterDir, "clusterDir is null");
+		Preconditions.checkNotNullArgument(qkeys, "qkSource is null");
+		Preconditions.checkNotNullArgument(geomCol, "geomCol is null");
+		Preconditions.checkArgument(blockSize > 0, "invalid block-size: " + blockSize);
+		Preconditions.checkArgument(workerCount > 0, "invalid worker-count: " + workerCount);
 
 		m_clusterDir = clusterDir;
 		m_qkeys = qkeys;

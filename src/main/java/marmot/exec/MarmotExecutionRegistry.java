@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import utils.async.Guard;
+import utils.thread.Guard;
 
 /**
  * 

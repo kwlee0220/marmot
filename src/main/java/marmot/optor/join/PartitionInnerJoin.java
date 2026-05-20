@@ -3,8 +3,9 @@ package marmot.optor.join;
 import java.util.List;
 import java.util.Map;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+
+import utils.Preconditions;
 
 import marmot.Record;
 import marmot.RecordSchema;
@@ -12,7 +13,6 @@ import marmot.RecordSet;
 import marmot.optor.support.colexpr.ColumnSelector;
 import marmot.rset.AbstractRecordSet;
 import marmot.support.DefaultRecord;
-import utils.Utilities;
 
 /**
  * 
@@ -30,10 +30,10 @@ class PartitionInnerJoin extends AbstractRecordSet {
 	
 	PartitionInnerJoin(RecordSet nonCacheds, List<Record> cacheds,
 						int cachingDsIdx, ColumnSelector combiner) {
-		Utilities.checkNotNullArgument(nonCacheds, "nonCacheds is null");
-		Utilities.checkNotNullArgument(cacheds, "cacheds is null");
-		Preconditions.checkArgument(cachingDsIdx == 0 || cachingDsIdx == 1);
-		Utilities.checkNotNullArgument(combiner, "combiner is null");
+		Preconditions.checkNotNullArgument(nonCacheds, "nonCacheds is null");
+		Preconditions.checkNotNullArgument(cacheds, "cacheds is null");
+		Preconditions.checkArgument(cachingDsIdx == 0 || cachingDsIdx == 1, "caching-index should be zero or one");
+		Preconditions.checkNotNullArgument(combiner, "combiner is null");
 		
 		m_rset = nonCacheds;
 		m_cache = cacheds;

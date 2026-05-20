@@ -6,6 +6,10 @@ import org.apache.hadoop.fs.Path;
 import org.locationtech.jts.geom.Envelope;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+import utils.func.FOption;
+import utils.io.IOUtils;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -23,9 +27,6 @@ import marmot.proto.optor.TeeProto;
 import marmot.proto.optor.TeeProto.GeometryInfoProto;
 import marmot.rset.PeekableRecordSet;
 import marmot.support.PBSerializable;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.io.IOUtils;
 
 
 /**
@@ -39,8 +40,8 @@ public class Tee extends AbstractRecordSetFunction implements PBSerializable<Tee
 	private @Nullable GeometryColumnInfo m_gcInfo;
 	
 	public Tee(Path path, MarmotFileWriteOptions opts) {
-		Utilities.checkNotNullArgument(path, "path is null");
-		Utilities.checkNotNullArgument(opts, "MarmotFileWriteOptions is null");
+		Preconditions.checkNotNullArgument(path, "path is null");
+		Preconditions.checkNotNullArgument(opts, "MarmotFileWriteOptions is null");
 		
 		m_path = path;
 		m_options = opts;

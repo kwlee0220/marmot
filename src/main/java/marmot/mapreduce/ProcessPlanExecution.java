@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 import utils.Throwables;
 import utils.async.AbstractThreadedExecution;
 import utils.async.CancellableWork;
-import utils.async.Guard;
+import utils.thread.Guard;
 import utils.io.IOUtils;
 
 import marmot.ExecutePlanOptions;

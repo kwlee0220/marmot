@@ -3,13 +3,14 @@ package marmot.optor.geo.filter;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 
+import utils.Preconditions;
+
 import marmot.MarmotCore;
 import marmot.plan.PredicateOptions;
 import marmot.proto.optor.UnaryEnvelopeIntersectsProto;
 import marmot.protobuf.PBUtils;
 import marmot.support.PBSerializable;
 import marmot.type.GeometryDataType;
-import utils.Utilities;
 
 /**
  * 
@@ -21,7 +22,7 @@ public class UnaryEnvelopeIntersects extends SpatialFilter<UnaryEnvelopeIntersec
 	
 	public UnaryEnvelopeIntersects(String geomCol, Envelope key, PredicateOptions opts) {
 		super(geomCol, opts);
-		Utilities.checkNotNullArgument(key, "Key Envelope");
+		Preconditions.checkNotNullArgument(key, "Key Envelope");
 
 		m_key = key;
 	}

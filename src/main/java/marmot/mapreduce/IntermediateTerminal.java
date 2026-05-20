@@ -9,7 +9,8 @@ import org.apache.hadoop.mapreduce.lib.output.LazyOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import utils.Preconditions;
+import utils.StopWatch;
 
 import marmot.MarmotInternalException;
 import marmot.Record;
@@ -22,8 +23,6 @@ import marmot.proto.optor.IntermediateTerminalProto;
 import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
 import marmot.support.ProgressReportable;
-import utils.StopWatch;
-import utils.Utilities;
 
 /**
  * 
@@ -43,7 +42,7 @@ public class IntermediateTerminal extends AbstractRecordSetConsumer
 	private volatile RecordSet m_inputRSet;
 	
 	IntermediateTerminal(Path path) {
-		Utilities.checkNotNullArgument(path, "output path is null");
+		Preconditions.checkNotNullArgument(path, "output path is null");
 		
 		m_path = path;
 		setLogger(LoggerFactory.getLogger(IntermediateTerminal.class));

@@ -4,6 +4,8 @@ import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.prep.PreparedGeometry;
 import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 
+import utils.Preconditions;
+
 import marmot.MarmotCore;
 import marmot.plan.PredicateOptions;
 import marmot.proto.GeometryProto;
@@ -11,7 +13,6 @@ import marmot.proto.optor.UnarySpatialIntersectsProto;
 import marmot.protobuf.PBUtils;
 import marmot.support.PBSerializable;
 import marmot.type.GeometryDataType;
-import utils.Utilities;
 
 /**
  * 
@@ -25,7 +26,7 @@ public class UnarySpatialIntersects extends SpatialFilter<UnarySpatialIntersects
 	
 	public UnarySpatialIntersects(String geomCol, Geometry key, PredicateOptions opts) {
 		super(geomCol, opts);
-		Utilities.checkNotNullArgument(key, "Key geometry");
+		Preconditions.checkNotNullArgument(key, "Key geometry");
 
 		m_keyDsId = null;
 		m_key = key;
@@ -33,7 +34,7 @@ public class UnarySpatialIntersects extends SpatialFilter<UnarySpatialIntersects
 	
 	public UnarySpatialIntersects(String geomCol, String keyDsId, PredicateOptions opts) {
 		super(geomCol, opts);
-		Utilities.checkNotNullArgument(keyDsId, "Key dataset id");
+		Preconditions.checkNotNullArgument(keyDsId, "Key dataset id");
 
 		m_keyDsId = keyDsId;
 		m_key = null;

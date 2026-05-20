@@ -26,10 +26,10 @@ import org.slf4j.LoggerFactory;
 
 import com.forcewave.ghdfs.obj.GMetaObject;
 
+import utils.Preconditions;
 import utils.StopWatch;
 import utils.Throwables;
 import utils.UnitUtils;
-import utils.Utilities;
 import utils.func.FOption;
 import utils.stream.FStream;
 
@@ -184,7 +184,7 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 	 * @throws DataSetNotFoundException	식별자에 해당하는 데이터세트가 없는 경우
 	 */
 	public DataSetImpl getDataSet(String dsId) {
-		Utilities.checkNotNullArgument(dsId);
+		Preconditions.checkNotNullArgument(dsId, "dataset id is null");
 		
 		return new DataSetImpl(this, getDataSetInfo(dsId));
 	}
@@ -198,7 +198,7 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 	 * @return	데이터세트 객체
 	 */
 	public DataSetImpl getDataSetOrNull(String dsId) {
-		Utilities.checkNotNullArgument(dsId);
+		Preconditions.checkNotNullArgument(dsId, "dataset id is null");
 		
 		return m_catalog.getDataSetInfo(dsId)
 						.map(info -> new DataSetImpl(this, info))
@@ -216,7 +216,7 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 	 * @throws DataSetNotFoundException	식별자에 해당하는 데이터세트 등록정보가 없는 경우
 	 */
 	public DataSetInfo getDataSetInfo(String dsId) {
-		Utilities.checkNotNullArgument(dsId);
+		Preconditions.checkNotNullArgument(dsId, "dataset id is null");
 		
 		return m_catalog.getDataSetInfo(dsId)
 						.getOrThrow(()->new DataSetNotFoundException(dsId));
@@ -241,7 +241,7 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 	 * @return	데이터세트 리스트
 	 */
 	public List<DataSet> getDataSetAllInDir(String folder, boolean recursive) {
-		Utilities.checkNotNullArgument(folder);
+		Preconditions.checkNotNullArgument(folder, "folder is null");
 		
 		return FStream.from(m_catalog.getDataSetInfoAllInDir(folder, recursive))
 						.map(info -> (DataSet)new DataSetImpl(this, info))
@@ -258,9 +258,9 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 	 */
 	public DataSetImpl createDataSet(String dsId, RecordSchema schema, CreateDataSetOptions opts)
 		throws DataSetExistsException {
-		Utilities.checkNotNullArgument(dsId, "dataset id is null");
-		Utilities.checkNotNullArgument(schema, "dataset schema is null");
-		Utilities.checkNotNullArgument(opts, "CreateDataSetOptions is null");
+		Preconditions.checkNotNullArgument(dsId, "dataset id is null");
+		Preconditions.checkNotNullArgument(schema, "dataset schema is null");
+		Preconditions.checkNotNullArgument(opts, "CreateDataSetOptions is null");
 		
 		// 'force' 옵션이 있는 경우는 식별자에 해당하는 미리 삭제한다.
 		// 주어진 식별자가 폴더인 경우는 폴더 전체를 삭제한다.
@@ -531,8 +531,8 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 
 
 	public RecordSchema getOutputRecordSchema(Plan plan, RecordSchema inputSchema) {
-		Utilities.checkNotNullArgument(plan, "plan is null");
-		Utilities.checkNotNullArgument(inputSchema, "inputSchema is null");
+		Preconditions.checkNotNullArgument(plan, "plan is null");
+		Preconditions.checkNotNullArgument(inputSchema, "inputSchema is null");
 		
 		return RecordSetOperatorChain.from(this, plan, inputSchema)
 										.getOutputRecordSchema();
@@ -600,8 +600,8 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 	}
 
 	public RecordSet executeLocally(Plan plan, RecordSet input) {
-		Utilities.checkNotNullArgument(plan, "plan is null");
-		Utilities.checkNotNullArgument(input, "input RecordSet is null");
+		Preconditions.checkNotNullArgument(plan, "plan is null");
+		Preconditions.checkNotNullArgument(input, "input RecordSet is null");
 		
 		RecordSetOperatorChain chain = RecordSetOperatorChain.from(this, plan,
 																	input.getRecordSchema());
@@ -618,7 +618,7 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 
 	public FOption<Record> executeToRecord(Plan plan, ExecutePlanOptions opts)
 		throws MarmotExecutionException {
-		Utilities.checkNotNullArgument(plan, "plan is null");
+		Preconditions.checkNotNullArgument(plan, "plan is null");
 
 		RecordSetOperatorChain chain = RecordSetOperatorChain.from(this, plan);
 		
@@ -650,7 +650,7 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 	}
 
 	public RecordSet executeToRecordSet(Plan plan, ExecutePlanOptions opts) {
-		Utilities.checkNotNullArgument(plan, "plan is null");
+		Preconditions.checkNotNullArgument(plan, "plan is null");
 		
 		// 'disableLocalExecution'이 설정되지 않은 상태에서, local execution이 가능하면
 		// 바로 local하게 수행시킨다.
@@ -734,8 +734,8 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 	}
 
 	public RecordSet executeToStream(String id, Plan plan) {
-		Utilities.checkNotNullArgument(id, "stream id is null");
-		Utilities.checkNotNullArgument(plan, "plan is null");
+		Preconditions.checkNotNullArgument(id, "stream id is null");
+		Preconditions.checkNotNullArgument(plan, "plan is null");
 		
 		return new KafkaTopicRecordSet(this, plan, id);
 	}

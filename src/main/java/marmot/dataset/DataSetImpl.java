@@ -12,9 +12,9 @@ import org.locationtech.jts.geom.Envelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
 import utils.Throwables;
 import utils.UnitUtils;
-import utils.Utilities;
 import utils.func.FOption;
 import utils.func.Optionals;
 import utils.func.UncheckedFunction;
@@ -291,7 +291,7 @@ public class DataSetImpl implements DataSet {
 
 	@Override
 	public SpatialIndexInfo createSpatialIndex(CreateSpatialIndexOptions opts) {
-		Utilities.checkNotNullArgument(opts, "CreateSpatialIndexOptions should not be null");
+		Preconditions.checkNotNullArgument(opts, "CreateSpatialIndexOptions should not be null");
 		
 		CreateSpatialIndexParameters params = new CreateSpatialIndexParameters();
 		params.inputDataset(getId());
@@ -440,8 +440,8 @@ public class DataSetImpl implements DataSet {
 
 	@Override
 	public RecordSet queryRange(Envelope range, int nsamples) {
-		Utilities.checkNotNullArgument(range, "range is null");
-		Utilities.checkArgument(nsamples > 0, "nsamples > 0");
+		Preconditions.checkNotNullArgument(range, "range is null");
+		Preconditions.checkArgument(nsamples > 0, "nsamples > 0");
 		
 		RangeQuery query = new RangeQuery(m_marmot, this, range, nsamples);
 		return query.run();
@@ -449,7 +449,7 @@ public class DataSetImpl implements DataSet {
 	
 	@Override
 	public RecordSet readSpatialCluster(String quadKey) {
-		Utilities.checkNotNullArgument(quadKey, "quad-key is null");
+		Preconditions.checkNotNullArgument(quadKey, "quad-key is null");
 		
 		SpatialIndexedCluster cluster = getSpatialIndexFile().getCluster(quadKey);
 		if ( s_logger.isDebugEnabled() ) {
@@ -477,7 +477,7 @@ public class DataSetImpl implements DataSet {
 		if ( !hasSpatialIndex() ) {
 			throw IndexNotFoundException.fromDataSet(getId());
 		}
-		Utilities.checkArgument(sampleCount > 1000,
+		Preconditions.checkArgument(sampleCount > 1000,
 							"sample count is too small: nsmaples=" + sampleCount);
 		if ( sampleCount >= Math.round(getRecordCount()*.7f) ) {
 			String msg = String.format("sample count is too large to the dataset: "

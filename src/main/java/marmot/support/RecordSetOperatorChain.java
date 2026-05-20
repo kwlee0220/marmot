@@ -7,10 +7,13 @@ import java.util.NoSuchElementException;
 
 import org.slf4j.Logger;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
 import com.google.protobuf.Descriptors.FieldDescriptor;
 import com.google.protobuf.Message;
+
+import utils.Preconditions;
+import utils.func.Try;
+import utils.stream.FStream;
 
 import marmot.MarmotCore;
 import marmot.Plan;
@@ -25,9 +28,6 @@ import marmot.optor.RecordSetOperator;
 import marmot.optor.RecordSetOperatorException;
 import marmot.proto.optor.OperatorProto;
 import marmot.protobuf.ProtoBufActivator;
-import utils.Utilities;
-import utils.func.Try;
-import utils.stream.FStream;
 
 /**
  * 
@@ -43,23 +43,23 @@ public class RecordSetOperatorChain {
 	private RecordSchema m_outputSchema = null;
 	
 	public static RecordSetOperatorChain from(MarmotCore marmot, RecordSchema inputSchema) {
-		Utilities.checkNotNullArgument(marmot, "marmot is null");
-		Utilities.checkNotNullArgument(inputSchema, "inputSchema is null");
+		Preconditions.checkNotNullArgument(marmot, "marmot is null");
+		Preconditions.checkNotNullArgument(inputSchema, "inputSchema is null");
 		
 		return new RecordSetOperatorChain(marmot).setInputRecordSchema(inputSchema);
 	}
 	
 	public static RecordSetOperatorChain from(MarmotCore marmot) {
-		Utilities.checkNotNullArgument(marmot, "marmot is null");
+		Preconditions.checkNotNullArgument(marmot, "marmot is null");
 		
 		return new RecordSetOperatorChain(marmot);
 	}
 	
 	public static RecordSetOperatorChain from(MarmotCore marmot, Plan plan,
 												RecordSchema inputSchema) {
-		Utilities.checkNotNullArgument(marmot, "marmot is null");
-		Utilities.checkNotNullArgument(plan, "plan is null");
-		Utilities.checkNotNullArgument(inputSchema, "inputSchema is null");
+		Preconditions.checkNotNullArgument(marmot, "marmot is null");
+		Preconditions.checkNotNullArgument(plan, "plan is null");
+		Preconditions.checkNotNullArgument(inputSchema, "inputSchema is null");
 		
 		List<RecordSetOperator> optors = FStream.from(plan.toProto().getOperatorsList())
 												.map(RecordSetOperatorChain::load)
@@ -68,8 +68,8 @@ public class RecordSetOperatorChain {
 	}
 	
 	public static RecordSetOperatorChain from(MarmotCore marmot, Plan plan) {
-		Utilities.checkNotNullArgument(marmot, "marmot is null");
-		Utilities.checkNotNullArgument(plan, "plan is null");
+		Preconditions.checkNotNullArgument(marmot, "marmot is null");
+		Preconditions.checkNotNullArgument(plan, "plan is null");
 		
 		List<RecordSetOperator> optors = FStream.from(plan.toProto().getOperatorsList())
 												.map(RecordSetOperatorChain::load)
@@ -123,7 +123,7 @@ public class RecordSetOperatorChain {
 	}
 	
 	public RecordSetOperator get(int index) {
-		Preconditions.checkArgument(index >= 0 && index < m_optors.size());
+		Preconditions.checkArgument(index >= 0 && index < m_optors.size(), "invalid index: %s", index);
 
 		return m_optors.get(index);
 	}
@@ -240,9 +240,11 @@ public class RecordSetOperatorChain {
 	}
 	
 	public RecordSet run(RecordSet input) {
-		Utilities.checkNotNullArgument(input, "input is null");
+		Preconditions.checkNotNullArgument(input, "input is null");
 		Preconditions.checkState(getRecordSetLoader() == null);
-		Preconditions.checkArgument(getInputRecordSchema().equals(input.getRecordSchema()));
+		Preconditions.checkArgument(getInputRecordSchema().equals(input.getRecordSchema()),
+									"invalid input record schema: expected=%s, input=%s",
+									getInputRecordSchema(), input.getRecordSchema());
 		
 		RecordSet rset = input;
 		for ( RecordSetOperator optor: m_optors ) {

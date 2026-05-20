@@ -12,9 +12,9 @@ import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
 import utils.StopWatch;
 import utils.Throwables;
-import utils.Utilities;
 
 import marmot.MarmotCore;
 import marmot.RecordSchema;
@@ -61,8 +61,8 @@ public class StoreAsHeapfile extends AbstractRecordSetConsumer
 	}
 	
 	public StoreAsHeapfile(Path path, MarmotFileWriteOptions opts) {
-		Utilities.checkNotNullArgument(path, "target heapfile path");
-		Utilities.checkNotNullArgument(opts, "MarmotFileWriteOptions");
+		Preconditions.checkNotNullArgument(path, "target heapfile path");
+		Preconditions.checkNotNullArgument(opts, "MarmotFileWriteOptions");
 		
 		m_rootPath = path;
 		m_opts = opts;

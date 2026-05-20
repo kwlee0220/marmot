@@ -5,6 +5,9 @@ import java.util.List;
 import org.locationtech.jts.geom.Geometry;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+import utils.stream.FStream;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -18,8 +21,6 @@ import marmot.support.PBSerializable;
 import marmot.type.DataTypes;
 import marmot.type.GeometryDataType;
 import marmot.type.TypeCode;
-import utils.Utilities;
-import utils.stream.FStream;
 
 
 /**
@@ -39,8 +40,8 @@ public class FlattenGeometry extends FlatTransform
 	}
 	
 	private FlattenGeometry(String geomColName, GeometryDataType componentGeomType) {
-		Utilities.checkNotNullArgument(geomColName, "Geometry column");
-		Utilities.checkNotNullArgument(componentGeomType, "component Geometry type");
+		Preconditions.checkNotNullArgument(geomColName, "Geometry column");
+		Preconditions.checkNotNullArgument(componentGeomType, "component Geometry type");
 		
 		m_geomColName = geomColName;
 		m_componentGeomType = componentGeomType;

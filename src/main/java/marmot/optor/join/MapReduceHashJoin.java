@@ -8,7 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import utils.CSV;
-import utils.Utilities;
+import utils.Preconditions;
 
 import marmot.MarmotCore;
 import marmot.Plan;
@@ -55,11 +55,11 @@ public class MapReduceHashJoin extends CompositeRecordSetFunction
 	public MapReduceHashJoin(String inputJoinColsExpr, String paramDsId,
 								String paramJoinColsExpr, String outputColumns,
 								JoinOptions opts) {
-		Utilities.checkNotNullArgument(inputJoinColsExpr, "input join columns expression");
-		Utilities.checkNotNullArgument(paramJoinColsExpr, "parameter join columns expression");
-		Utilities.checkNotNullArgument(paramDsId,  "parameter dataset is null");
-		Utilities.checkNotNullArgument(outputColumns,  "output columns is null");
-		Utilities.checkNotNullArgument(opts,  "JoinOptions is null");
+		Preconditions.checkNotNullArgument(inputJoinColsExpr, "input join columns expression");
+		Preconditions.checkNotNullArgument(paramJoinColsExpr, "parameter join columns expression");
+		Preconditions.checkNotNullArgument(paramDsId,  "parameter dataset is null");
+		Preconditions.checkNotNullArgument(outputColumns,  "output columns is null");
+		Preconditions.checkNotNullArgument(opts,  "JoinOptions is null");
 		
 		String[] inCols = CSV.parseCsvAsArray(inputJoinColsExpr);
 		String[] paramCols = CSV.parseCsvAsArray(paramJoinColsExpr);

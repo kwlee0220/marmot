@@ -16,7 +16,7 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 
-import utils.Utilities;
+import utils.Preconditions;
 import utils.func.FOption;
 
 import marmot.MarmotCore;
@@ -50,7 +50,7 @@ public class StoreAsCsv extends AbstractRecordSetConsumer
 	private CSVFormat m_format;
 	
 	private StoreAsCsv(Path path, StoreAsCsvOptions opts) {
-		Utilities.checkNotNullArgument(path, "path is null");
+		Preconditions.checkNotNullArgument(path, "path is null");
 		
 		m_path = path;
 		m_options = opts;

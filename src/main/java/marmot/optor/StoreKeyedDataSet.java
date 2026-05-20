@@ -9,9 +9,7 @@ import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-
-import utils.Utilities;
+import utils.Preconditions;
 import utils.func.FOption;
 import utils.stream.FStream;
 import utils.thread.RecurringScheduleThread;
@@ -47,8 +45,8 @@ public class StoreKeyedDataSet extends AbstractRecordSetConsumer
 	private long m_count;
 	
 	private StoreKeyedDataSet(Path rootPath, StoreDataSetOptions opts) {
-		Utilities.checkNotNullArgument(rootPath, "target root path is null");
-		Utilities.checkNotNullArgument(opts, "options are null");
+		Preconditions.checkNotNullArgument(rootPath, "target root path is null");
+		Preconditions.checkNotNullArgument(opts, "options are null");
 		
 		m_rootPath = rootPath;
 		m_options = opts;
@@ -59,7 +57,9 @@ public class StoreKeyedDataSet extends AbstractRecordSetConsumer
 	@Override
 	public void consume(RecordSet rset) {
 		checkInitialized();
-		Preconditions.checkArgument(rset instanceof KeyedRecordSet);
+		Preconditions.checkArgument(rset instanceof KeyedRecordSet,
+									"invalid record set: expected=%s, actual=%s",
+									KeyedRecordSet.class.getName(), rset.getClass().getName());
 		
 		final MarmotCore marmot = getMarmotCore();
 		

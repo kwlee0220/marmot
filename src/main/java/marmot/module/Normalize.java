@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
-import utils.Utilities;
+import utils.Preconditions;
 import utils.func.FOption;
 import utils.stream.FStream;
 
@@ -68,10 +68,10 @@ public class Normalize implements MarmotModule {
 		m_marmot = marmot;
 		m_params = NormalizeParameters.fromMap(paramsMap);
 		
-		Utilities.checkNotNullArgument(m_params.inputDataset(), "parameter is missing: " + NormalizeParameters.INPUT_DATASET);
-		Utilities.checkNotNullArgument(m_params.outputDataset(), "parameter is missing: " + NormalizeParameters.OUTPUT_DATASET);
-		Utilities.checkNotNullArgument(m_params.inputFeatureColumns(), "parameter is missing: " + NormalizeParameters.INPUT_FEATURE_COLUMNS);
-		Utilities.checkNotNullArgument(m_params.outputFeatureColumns(), "parameter is missing: " + NormalizeParameters.OUTPUT_COLUMNS);
+		Preconditions.checkNotNullArgument(m_params.inputDataset(), "parameter is missing: " + NormalizeParameters.INPUT_DATASET);
+		Preconditions.checkNotNullArgument(m_params.outputDataset(), "parameter is missing: " + NormalizeParameters.OUTPUT_DATASET);
+		Preconditions.checkNotNullArgument(m_params.inputFeatureColumns(), "parameter is missing: " + NormalizeParameters.INPUT_FEATURE_COLUMNS);
+		Preconditions.checkNotNullArgument(m_params.outputFeatureColumns(), "parameter is missing: " + NormalizeParameters.OUTPUT_COLUMNS);
 	}
 
 	@Override

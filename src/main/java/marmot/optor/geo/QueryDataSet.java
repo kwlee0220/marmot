@@ -4,6 +4,10 @@ import org.apache.hadoop.fs.Path;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 
+import utils.CSV;
+import utils.Preconditions;
+import utils.func.FOption;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -23,9 +27,6 @@ import marmot.plan.PredicateOptions;
 import marmot.proto.optor.QueryDataSetProto;
 import marmot.support.PBSerializable;
 import marmot.support.RecordSetOperatorChain;
-import utils.CSV;
-import utils.Utilities;
-import utils.func.FOption;
 
 /**
  * 
@@ -38,8 +39,8 @@ public class QueryDataSet extends CompositeRecordSetLoader
 	private PredicateOptions m_opts = PredicateOptions.DEFAULT;
 	
 	private QueryDataSet(String dsId, QueryRange range) {
-		Utilities.checkNotNullArgument(dsId, "input dataset id");
-		Utilities.checkNotNullArgument(range, "QueryRange");
+		Preconditions.checkNotNullArgument(dsId, "input dataset id");
+		Preconditions.checkNotNullArgument(range, "QueryRange");
 		
 		m_dsId = dsId;
 		m_range = range;

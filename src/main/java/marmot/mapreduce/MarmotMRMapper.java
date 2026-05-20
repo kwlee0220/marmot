@@ -15,6 +15,11 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+import utils.Throwables;
+import utils.UnitUtils;
+import utils.func.FOption;
+
 import marmot.MarmotCore;
 import marmot.Plan;
 import marmot.RecordSchema;
@@ -22,10 +27,6 @@ import marmot.RecordSet;
 import marmot.exec.MarmotExecutionException;
 import marmot.mapreduce.support.MarmotMapperContext;
 import marmot.support.RecordSetOperatorChain;
-import utils.Throwables;
-import utils.UnitUtils;
-import utils.Utilities;
-import utils.func.FOption;
 
 
 /**
@@ -53,7 +54,7 @@ public class MarmotMRMapper extends Mapper<Writable, Writable, Writable, Writabl
 
 	@Override
 	public MarmotCore getMarmotCore() {
-		Utilities.checkState(m_marmot != null, "MarmotCore has not been set");
+		Preconditions.checkState(m_marmot != null, "MarmotCore has not been set");
 		
 		return m_marmot;
 	}

@@ -19,6 +19,9 @@ import com.forcewave.ghdfs.obj.GMetaObject;
 import com.forcewave.ghdfs.obj.GObject;
 import com.forcewave.ghdfs.writer.GHDFSWriter;
 
+import utils.Preconditions;
+import utils.Throwables;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -33,8 +36,6 @@ import marmot.optor.support.AbstractRecordSetConsumer;
 import marmot.proto.optor.StoreAsGHdfsProto;
 import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
-import utils.Throwables;
-import utils.Utilities;
 
 
 /**
@@ -52,8 +53,8 @@ public class StoreAsGHdfs extends AbstractRecordSetConsumer
 	private int m_geomColIdx = -1;
 	
 	private StoreAsGHdfs(String layerName, GeometryColumnInfo gcInfo, boolean force) {
-		Utilities.checkNotNullArgument(layerName, "layer name is null");
-		Utilities.checkNotNullArgument(gcInfo, "GeometryColumnInfo is null");
+		Preconditions.checkNotNullArgument(layerName, "layer name is null");
+		Preconditions.checkNotNullArgument(gcInfo, "GeometryColumnInfo is null");
 		
 		m_layerName = layerName;
 		m_gcInfo = gcInfo;

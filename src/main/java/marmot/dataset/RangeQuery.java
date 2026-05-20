@@ -1,7 +1,5 @@
 package marmot.dataset;
 
-import static utils.Utilities.checkNotNullArgument;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -18,6 +16,7 @@ import org.locationtech.jts.geom.prep.PreparedGeometryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
 import utils.StopWatch;
 import utils.Throwables;
 import utils.stream.FStream;
@@ -57,9 +56,9 @@ public class RangeQuery {
 	private final PreparedGeometry m_pkey;
 	
 	RangeQuery(MarmotCore marmot, DataSetImpl ds, Envelope range, int sampleCount) {
-		checkNotNullArgument(marmot, "MarmotRuntime");
-		checkNotNullArgument(ds, "DataSet");
-		checkNotNullArgument(range, "query range");
+		Preconditions.checkNotNullArgument(marmot, "MarmotRuntime");
+		Preconditions.checkNotNullArgument(ds, "DataSet");
+		Preconditions.checkNotNullArgument(range, "query range");
 		
 		m_marmot = marmot;
 		m_ds = ds;
@@ -236,7 +235,7 @@ public class RangeQuery {
 				.map(t -> new ClusterReader(t.index(), idxFile, t.value(), sampleRatio))
 				.forEach(svc::submit);
 		
-		SuppliableFStream<List<Record>> recListStream = FStream.pipe(LOCAL_INDEX_SCAN_THREADS);
+		SuppliableFStream<List<Record>> recListStream = new SuppliableFStream<>(LOCAL_INDEX_SCAN_THREADS);
 		CompletableFuture.runAsync(() -> {
 			int remains = est.getClusterEstimates().size();
 			while ( remains > 0 ) {

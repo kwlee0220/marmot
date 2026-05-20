@@ -14,6 +14,12 @@ import org.apache.hadoop.io.compress.CompressionCodec;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+import utils.StopWatch;
+import utils.UnitUtils;
+import utils.func.FOption;
+import utils.io.IOUtils;
+
 import marmot.MarmotCore;
 import marmot.RecordSet;
 import marmot.io.HdfsPath;
@@ -22,11 +28,6 @@ import marmot.io.MarmotSequenceFile;
 import marmot.optor.LoadMarmotFile;
 import marmot.optor.StoreAsHeapfile;
 import marmot.support.HadoopUtils;
-import utils.StopWatch;
-import utils.UnitUtils;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.io.IOUtils;
 
 /**
  * 
@@ -54,7 +55,7 @@ public class MarmotFileServer {
 	 * @return	파일에 기록된 레코드 세트. 
 	 */
 	public RecordSet readMarmotFile(Path path) {
-		Utilities.checkNotNullArgument(path, "MarmotFile path is null");
+		Preconditions.checkNotNullArgument(path, "MarmotFile path is null");
 		
 		try {
 			List<MarmotSequenceFile> files = HdfsPath.of(m_fs, path)
@@ -77,14 +78,14 @@ public class MarmotFileServer {
 	 * @param rset	저장할 레코드 세트.
 	 */
 	public void writeMarmotFile(Path path, RecordSet rset) {
-		Utilities.checkNotNullArgument(path, "MarmotFile path is null");
-		Utilities.checkNotNullArgument(rset, "RecordSet is null");
+		Preconditions.checkNotNullArgument(path, "MarmotFile path is null");
+		Preconditions.checkNotNullArgument(rset, "RecordSet is null");
 		
 		StoreAsHeapfile.store(m_marmot, path, rset);
 	}
 
 	public boolean existsMarmotFile(String path) {
-		Utilities.checkNotNullArgument(path, "path is null");
+		Preconditions.checkNotNullArgument(path, "path is null");
 
 		return HdfsPath.of(m_conf, new Path(path)).exists();
 	}
@@ -105,7 +106,7 @@ public class MarmotFileServer {
 	 * @return	 파일 삭제 여부.
 	 */
 	public boolean deleteFile(Path path) {
-		Utilities.checkNotNullArgument(path, "path is null");
+		Preconditions.checkNotNullArgument(path, "path is null");
 		
 		return HdfsPath.of(m_conf, path).delete();
 	}
@@ -122,8 +123,8 @@ public class MarmotFileServer {
 	 * @return	변경 성공 여부.
 	 */
 	public boolean renameFile(String srcPath, String tarPath) {
-		Utilities.checkNotNullArgument(srcPath, "source path is null");
-		Utilities.checkNotNullArgument(tarPath, "target path is null");
+		Preconditions.checkNotNullArgument(srcPath, "source path is null");
+		Preconditions.checkNotNullArgument(tarPath, "target path is null");
 		
 		try {
 			HdfsPath.of(m_conf, new Path(srcPath))
@@ -167,7 +168,7 @@ public class MarmotFileServer {
 	}
 
 	public long getBlockSize(String path) {
-		Utilities.checkNotNullArgument(path, "path is null");
+		Preconditions.checkNotNullArgument(path, "path is null");
 
 		try {
 			return HdfsPath.of(m_fs, new Path(path)).getFileStatus().getBlockSize();

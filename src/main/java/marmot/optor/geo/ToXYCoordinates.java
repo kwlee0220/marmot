@@ -2,6 +2,8 @@ package marmot.optor.geo;
 
 import org.locationtech.jts.geom.Point;
 
+import utils.Preconditions;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -12,7 +14,6 @@ import marmot.optor.support.AbstractRecordSetFunction;
 import marmot.proto.optor.ToXYCoordinatesProto;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.Utilities;
 
 /**
  * 
@@ -30,9 +31,9 @@ public class ToXYCoordinates extends AbstractRecordSetFunction
 	private int m_yColIdx = -1;
 	
 	public ToXYCoordinates(String geomCol, String xCol, String yCol) {
-		Utilities.checkNotNullArgument(geomCol, "geometry column name");
-		Utilities.checkNotNullArgument(xCol, "x-coordinate column name");
-		Utilities.checkNotNullArgument(yCol, "y-coordinate column name");
+		Preconditions.checkNotNullArgument(geomCol, "geometry column name");
+		Preconditions.checkNotNullArgument(xCol, "x-coordinate column name");
+		Preconditions.checkNotNullArgument(yCol, "y-coordinate column name");
 		
 		m_geomCol = geomCol;
 		m_xCol = xCol;

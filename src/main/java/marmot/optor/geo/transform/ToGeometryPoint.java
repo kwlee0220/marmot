@@ -2,6 +2,8 @@ package marmot.optor.geo.transform;
 
 import org.locationtech.jts.geom.Point;
 
+import utils.Preconditions;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -12,7 +14,6 @@ import marmot.support.DataUtils;
 import marmot.support.GeoUtils;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.Utilities;
 
 /**
  * 
@@ -29,9 +30,9 @@ public class ToGeometryPoint extends RecordLevelTransform
 	private Column m_outCol;
 
 	ToGeometryPoint(String xColName, String yColName, String outColName) {
-		Utilities.checkNotNullArgument(xColName, "x-column is null");
-		Utilities.checkNotNullArgument(yColName, "y-column is null");
-		Utilities.checkNotNullArgument(outColName, "output column is null");
+		Preconditions.checkNotNullArgument(xColName, "x-column is null");
+		Preconditions.checkNotNullArgument(yColName, "y-column is null");
+		Preconditions.checkNotNullArgument(outColName, "output column is null");
 		
 		m_xColName = xColName;
 		m_yColName = yColName;

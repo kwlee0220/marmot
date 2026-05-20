@@ -7,6 +7,9 @@ import java.util.Set;
 
 import com.google.common.collect.Maps;
 
+import utils.Preconditions;
+import utils.Throwables;
+
 import marmot.MarmotInternalException;
 import marmot.module.geo.ClusterWithKMeans;
 import marmot.module.geo.DBSCAN;
@@ -15,8 +18,6 @@ import marmot.module.geo.arc.ArcBufferProcess;
 import marmot.module.geo.arc.ArcMergeProcess;
 import marmot.module.geo.arc.ArcSplitProcess;
 import marmot.module.geo.arc.ArcUnionProcess;
-import utils.Throwables;
-import utils.Utilities;
 
 /**
  * 
@@ -69,7 +70,7 @@ public class MarmotModuleRegistry {
 	}
 	
 	public MarmotModule createModule(String id) {
-		Utilities.checkNotNullArgument(id, "module id is null");
+		Preconditions.checkNotNullArgument(id, "module id is null");
 		
 		Class<? extends MarmotModule> procCls = m_registry.get(id);
 		if ( procCls == null ) {

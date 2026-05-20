@@ -8,6 +8,11 @@ import org.locationtech.jts.geom.Polygon;
 
 import com.google.common.collect.Lists;
 
+import utils.Preconditions;
+import utils.Size2d;
+import utils.Size2i;
+import utils.stream.FStream;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.MarmotServer;
@@ -21,10 +26,6 @@ import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
 import marmot.type.GridCell;
-import utils.Size2d;
-import utils.Size2i;
-import utils.Utilities;
-import utils.stream.FStream;
 
 /**
  * 
@@ -43,8 +44,8 @@ public class AssignSquareGridCell extends FlatTransform
 	private int m_outputColIdx;
 	
 	public AssignSquareGridCell(SquareGrid grid, String geomCol, boolean assignOutside) {
-		Utilities.checkNotNullArgument(grid, "SquareGrid is null");
-		Utilities.checkNotNullArgument(geomCol, "Geometry column name is null");
+		Preconditions.checkNotNullArgument(grid, "SquareGrid is null");
+		Preconditions.checkNotNullArgument(geomCol, "Geometry column name is null");
 		
 		m_grid = grid;
 		m_geomCol = geomCol;

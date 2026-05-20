@@ -5,7 +5,8 @@ import org.locationtech.jts.operation.buffer.BufferOp;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import utils.Preconditions;
+import utils.func.FOption;
 
 import marmot.Column;
 import marmot.Record;
@@ -16,8 +17,6 @@ import marmot.proto.optor.BufferTransformProto;
 import marmot.support.DataUtils;
 import marmot.support.PBSerializable;
 import marmot.type.GeometryDataType;
-import utils.Utilities;
-import utils.func.FOption;
 
 /**
  * 
@@ -48,7 +47,7 @@ public class BufferTransform extends SpatialRecordLevelTransform<BufferTransform
 	private BufferTransform(String geomCol, String distCol, FOption<Integer> segCount,
 							GeomOpOptions opts) {
 		super(geomCol, opts);
-		Utilities.checkNotNullArgument(distCol, "distance column is null");
+		Preconditions.checkNotNullArgument(distCol, "distance column is null");
 
 		m_distanceCol = distCol;
 		m_segmentCount = segCount;

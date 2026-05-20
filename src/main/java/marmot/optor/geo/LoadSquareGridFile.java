@@ -8,7 +8,11 @@ import org.locationtech.jts.geom.Envelope;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import utils.Preconditions;
+import utils.Size2d;
+import utils.Size2i;
+import utils.Size2l;
+import utils.func.FOption;
 
 import marmot.MarmotCore;
 import marmot.MarmotServer;
@@ -21,11 +25,6 @@ import marmot.optor.rset.GridRecordSet;
 import marmot.optor.support.AbstractRecordSetLoader;
 import marmot.proto.optor.LoadSquareGridFileProto;
 import marmot.support.PBSerializable;
-import utils.Size2d;
-import utils.Size2i;
-import utils.Size2l;
-import utils.Utilities;
-import utils.func.FOption;
 
 /**
  * 
@@ -41,23 +40,23 @@ public class LoadSquareGridFile extends AbstractRecordSetLoader
 	private FOption<Integer> m_nworkers = FOption.empty();	// 적재작업을 수행할 파티션(mapper)의 수
 	
 	public LoadSquareGridFile(SquareGrid grid) {
-		Utilities.checkNotNullArgument(grid, "SquareGrid should not be null");
+		Preconditions.checkNotNullArgument(grid, "SquareGrid should not be null");
 
 		m_grid = grid;
 		setLogger(s_logger);
 	}
 	
 	public LoadSquareGridFile(String dataset, Size2d cellSize) {
-		Utilities.checkNotNullArgument(dataset, "dataset id should not be null");
-		Utilities.checkNotNullArgument(cellSize, "Grid cell size should not be null");
+		Preconditions.checkNotNullArgument(dataset, "dataset id should not be null");
+		Preconditions.checkNotNullArgument(cellSize, "Grid cell size should not be null");
 
 		m_grid = new SquareGrid(dataset, cellSize);
 		setLogger(s_logger);
 	}
 	
 	public LoadSquareGridFile(Envelope bounds, Size2d cellSize) {
-		Utilities.checkNotNullArgument(bounds, "Universe Envelope should not be null");
-		Utilities.checkNotNullArgument(cellSize, "Grid cell size should not be null");
+		Preconditions.checkNotNullArgument(bounds, "Universe Envelope should not be null");
+		Preconditions.checkNotNullArgument(cellSize, "Grid cell size should not be null");
 
 		m_grid = new SquareGrid(bounds, cellSize);
 		setLogger(s_logger);

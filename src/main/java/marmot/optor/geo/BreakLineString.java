@@ -7,6 +7,9 @@ import org.locationtech.jts.geom.LineString;
 
 import com.google.common.collect.Lists;
 
+import utils.Preconditions;
+import utils.stream.FStream;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -17,8 +20,6 @@ import marmot.optor.support.AbstractRecordSetFunction;
 import marmot.proto.optor.BreakLineStringProto;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.Utilities;
-import utils.stream.FStream;
 
 
 /**
@@ -31,7 +32,7 @@ public class BreakLineString extends AbstractRecordSetFunction
 	private int m_geomColIdx = -1;
 	
 	public BreakLineString(String geomColName) {
-		Utilities.checkNotNullArgument(geomColName, "Geometry column");
+		Preconditions.checkNotNullArgument(geomColName, "Geometry column");
 		
 		m_geomCol = geomColName;
 	}

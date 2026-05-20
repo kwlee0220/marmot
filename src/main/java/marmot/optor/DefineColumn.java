@@ -3,6 +3,10 @@ package marmot.optor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+import utils.Throwables;
+import utils.func.FOption;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -15,9 +19,6 @@ import marmot.proto.optor.DefineColumnProto;
 import marmot.support.DataUtils;
 import marmot.support.PBSerializable;
 import marmot.support.RecordScriptExecution;
-import utils.Throwables;
-import utils.Utilities;
-import utils.func.FOption;
 
 
 /**
@@ -39,8 +40,8 @@ public class DefineColumn extends RecordLevelTransform
 	private ColumnVariableResolverFactory m_vrFact;
 	
 	public DefineColumn(String colDecl, RecordScript initalizer) {
-		Utilities.checkNotNullArgument(colDecl, "column declaration");
-		Utilities.checkNotNullArgument(initalizer, "column initializer");
+		Preconditions.checkNotNullArgument(colDecl, "column declaration");
+		Preconditions.checkNotNullArgument(initalizer, "column initializer");
 		
 		m_colDecl = colDecl;
 		m_columnInitScript = FOption.of(initalizer);
@@ -48,7 +49,7 @@ public class DefineColumn extends RecordLevelTransform
 	}
 	
 	public DefineColumn(String colDecl) {
-		Utilities.checkNotNullArgument(colDecl, "column declaration");
+		Preconditions.checkNotNullArgument(colDecl, "column declaration");
 		
 		m_colDecl = colDecl;
 		m_columnInitScript = FOption.empty();

@@ -1,12 +1,13 @@
 package marmot.optor.reducer;
 
+import utils.Preconditions;
+
 import marmot.Column;
 import marmot.Record;
 import marmot.RecordSchema;
 import marmot.optor.AggregateType;
 import marmot.support.DataUtils;
 import marmot.type.DataType;
-import utils.Utilities;
 
 /**
  * 
@@ -23,7 +24,7 @@ public class Sum implements ValueAggregate {
 	private int m_intermColIdx = -1;
 
 	public Sum(String colName) {
-		Utilities.checkNotNullArgument(colName, "aggregate input column");
+		Preconditions.checkNotNullArgument(colName, "aggregate input column");
 		
 		m_aggrColName = colName;
 	}
@@ -45,7 +46,7 @@ public class Sum implements ValueAggregate {
 
 	@Override
 	public void setOutputColumn(String colName) {
-		Utilities.checkNotNullArgument(colName, "colName is null");
+		Preconditions.checkNotNullArgument(colName, "colName is null");
 		
 		m_outColName = colName.toLowerCase();
 	}

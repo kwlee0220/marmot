@@ -12,7 +12,7 @@ import javax.annotation.concurrent.GuardedBy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import utils.async.Guard;
+import utils.thread.Guard;
 import utils.func.CheckedRunnable;
 import utils.func.FOption;
 
@@ -36,7 +36,7 @@ class ExternExecution extends AbstractMarmotExecution<ExternAnalysis> implements
 	}
 
 	@Override
-	public void run() throws Throwable {
+	public void run() throws Exception {
 		ExternAnalysis anal = m_analysis.get();
 		
 		List<String> command = new ArrayList<>();

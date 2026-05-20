@@ -1,9 +1,11 @@
 package marmot.optor;
 
-import com.google.common.base.Preconditions;
 import com.univocity.parsers.csv.CsvFormat;
 import com.univocity.parsers.csv.CsvParser;
 import com.univocity.parsers.csv.CsvParserSettings;
+
+import utils.Preconditions;
+import utils.Throwables;
 
 import marmot.Column;
 import marmot.MarmotCore;
@@ -15,8 +17,6 @@ import marmot.proto.optor.ParseCsvProto;
 import marmot.support.DataUtils;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.Throwables;
-import utils.Utilities;
 
 
 /**
@@ -38,9 +38,9 @@ public class ParseCsvText extends RecordLevelTransform
 	private Column[] m_columns;
 	
 	private ParseCsvText(String csvColumn, ParseCsvOptions opts) {
-		Utilities.checkNotNullArgument(csvColumn, "CSV column is null");
-		Utilities.checkNotNullArgument(opts, "CsvOptions is null");
-		Utilities.checkNotNullArgument(opts.header().isPresent(), "CSV header is null");
+		Preconditions.checkNotNullArgument(csvColumn, "CSV column is null");
+		Preconditions.checkNotNullArgument(opts, "CsvOptions is null");
+		Preconditions.checkNotNullArgument(opts.header().isPresent(), "CSV header is null");
 
 		m_csvColName = csvColumn;
 		m_options = opts;
@@ -50,7 +50,7 @@ public class ParseCsvText extends RecordLevelTransform
 
 	@Override
 	public void initialize(MarmotCore marmot, RecordSchema inputSchema) {
-//		Utilities.checkNotNullArgument(marmot, "MarmotServer is null");
+//		Preconditions.checkNotNullArgument(marmot, "MarmotServer is null");
 		
 		Column col = inputSchema.findColumn(m_csvColName)
 						.getOrThrow(() -> {

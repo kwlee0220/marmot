@@ -19,7 +19,6 @@ import marmot.io.serializer.MarmotSerializers;
 import marmot.optor.KeyColumn;
 import marmot.optor.NullsOrder;
 import marmot.optor.SortOrder;
-import utils.Utilities;
 
 
 /**
@@ -54,10 +53,10 @@ public class MarmotMapOutputKey implements WritableComparable<MarmotMapOutputKey
 	MarmotMapOutputKey(int groupKeyLength, MultiColumnKey key, RecordSchema schema) {
 		int length = key.length();
 		
-		Utilities.checkArgument(groupKeyLength <= MAX_GROUP_KEY_LENGTH && groupKeyLength >= 0,
-								() -> "invalid groupKeyLength: " + groupKeyLength);
-		Utilities.checkArgument(length <= MAX_KEY_LENGTH && length >= groupKeyLength,
-								() -> "invalid keyLength: " + length);
+		Preconditions.checkArgument(groupKeyLength <= MAX_GROUP_KEY_LENGTH && groupKeyLength >= 0,
+									"invalid groupKeyLength: %s", groupKeyLength);
+		Preconditions.checkArgument(length <= MAX_KEY_LENGTH && length >= groupKeyLength,
+									"invalid keyLength: %d", length);
 		
 		m_groupKeyLength = (short)groupKeyLength;
 		m_serializers = new DataTypeSerializer[length];

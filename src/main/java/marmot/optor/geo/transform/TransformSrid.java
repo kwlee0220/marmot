@@ -5,13 +5,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+
 import marmot.geo.CRSUtils;
 import marmot.geo.CoordinateTransform;
 import marmot.plan.GeomOpOptions;
 import marmot.proto.optor.TransformCrsProto;
 import marmot.support.PBSerializable;
 import marmot.type.GeometryDataType;
-import utils.Utilities;
 
 
 /**
@@ -28,8 +29,8 @@ public class TransformSrid extends SpatialRecordLevelTransform<TransformSrid>
 
 	public TransformSrid(String srcGeomCol, String srcSrid, String tarSrid, GeomOpOptions opts) {
 		super(srcGeomCol, opts);
-		Utilities.checkNotNullArgument(srcSrid, "srcSrid is null");
-		Utilities.checkNotNullArgument(tarSrid, "tarSrid is null");
+		Preconditions.checkNotNullArgument(srcSrid, "srcSrid is null");
+		Preconditions.checkNotNullArgument(tarSrid, "tarSrid is null");
 		
 		m_srcSrid = srcSrid;
 		m_tarSrid = tarSrid;

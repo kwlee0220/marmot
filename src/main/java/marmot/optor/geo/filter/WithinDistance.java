@@ -2,7 +2,7 @@ package marmot.optor.geo.filter;
 
 import org.locationtech.jts.geom.Geometry;
 
-import com.google.common.base.Preconditions;
+import utils.Preconditions;
 
 import marmot.MarmotCore;
 import marmot.plan.PredicateOptions;
@@ -11,7 +11,6 @@ import marmot.proto.optor.WithinDistanceProto;
 import marmot.protobuf.PBUtils;
 import marmot.support.PBSerializable;
 import marmot.type.GeometryDataType;
-import utils.Utilities;
 
 /**
  * 
@@ -26,8 +25,8 @@ public final class WithinDistance extends SpatialFilter<WithinDistance>
 	public WithinDistance(String geomCol, Geometry key, double distance, PredicateOptions opts) {
 		super(geomCol, opts);
 		
-		Utilities.checkNotNullArgument(key, "key is null");
-		Preconditions.checkArgument(distance >= 0);
+		Preconditions.checkNotNullArgument(key, "key is null");
+		Preconditions.checkArgument(distance >= 0, "distance should larger than zero");
 
 		m_keyDsId = null;
 		m_key = key;
@@ -36,7 +35,7 @@ public final class WithinDistance extends SpatialFilter<WithinDistance>
 	
 	public WithinDistance(String geomCol, String keyDsId, double distance, PredicateOptions opts) {
 		super(geomCol, opts);
-		Utilities.checkNotNullArgument(keyDsId, "Key dataset id");
+		Preconditions.checkNotNullArgument(keyDsId, "Key dataset id");
 
 		m_keyDsId = keyDsId;
 		m_key = null;

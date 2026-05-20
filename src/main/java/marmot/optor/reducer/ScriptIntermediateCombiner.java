@@ -4,6 +4,9 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
+import utils.Preconditions;
+import utils.func.FOption;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -12,8 +15,6 @@ import marmot.proto.optor.ScriptRecordSetCombinerProto;
 import marmot.protobuf.PBUtils;
 import marmot.support.PBSerializable;
 import marmot.support.RecordScriptExecution;
-import utils.Utilities;
-import utils.func.FOption;
 
 
 /**
@@ -27,8 +28,8 @@ public class ScriptIntermediateCombiner extends AbstractRecordSetReducer
 	private final Map<String,Object> m_variables = Maps.newHashMap();
 	
 	ScriptIntermediateCombiner(FOption<String> initializeScript, String combineScript) {
-		Utilities.checkNotNullArgument(initializeScript, "initializeScript is null");
-		Utilities.checkNotNullArgument(combineScript, "combineScript is null");
+		Preconditions.checkNotNullArgument(initializeScript, "initializeScript is null");
+		Preconditions.checkNotNullArgument(combineScript, "combineScript is null");
 		
 		m_combineScript = initializeScript.map(init -> RecordScript.of(init, combineScript))
 										.getOrElse(() -> RecordScript.of(combineScript));

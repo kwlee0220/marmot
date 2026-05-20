@@ -5,6 +5,9 @@ import static java.lang.Math.exp;
 import static java.lang.Math.pow;
 import static java.lang.Math.sqrt;
 
+import utils.Preconditions;
+import utils.func.FOption;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -18,8 +21,6 @@ import marmot.support.DataUtils;
 import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.Utilities;
-import utils.func.FOption;
 
 
 /**
@@ -39,8 +40,8 @@ public class EstimateKernelDensity extends SpatialKnnJoin<EstimateKernelDensity>
 								double radius, String densityColumn, SpatialJoinOptions opts) {
 		super(geomColumn, dsId, radius, FOption.empty(), opts);
 		
-		Utilities.checkNotNullArgument(valueColumn, "input value column name");
-		Utilities.checkNotNullArgument(densityColumn, "output density column name");
+		Preconditions.checkNotNullArgument(valueColumn, "input value column name");
+		Preconditions.checkNotNullArgument(densityColumn, "output density column name");
 		
 		m_valueColumn = valueColumn;
 		m_maxRadius = radius;

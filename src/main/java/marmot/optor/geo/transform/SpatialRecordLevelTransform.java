@@ -4,6 +4,8 @@ import org.locationtech.jts.geom.Geometry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -11,7 +13,6 @@ import marmot.RecordSchema;
 import marmot.optor.support.RecordLevelTransform;
 import marmot.plan.GeomOpOptions;
 import marmot.type.GeometryDataType;
-import utils.Utilities;
 
 /**
  * 
@@ -40,8 +41,8 @@ public abstract class SpatialRecordLevelTransform<T extends SpatialRecordLevelTr
 	}
 	
 	protected SpatialRecordLevelTransform(String inGeomCol, GeomOpOptions opts) {
-		Utilities.checkNotNullArgument(inGeomCol, "input geometry column is null");
-		Utilities.checkNotNullArgument(opts, "GeomOpOptions is null");
+		Preconditions.checkNotNullArgument(inGeomCol, "input geometry column is null");
+		Preconditions.checkNotNullArgument(opts, "GeomOpOptions is null");
 		
 		m_inputGeomCol = inGeomCol;
 		m_options = opts;

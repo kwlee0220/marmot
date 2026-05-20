@@ -5,6 +5,10 @@ import java.lang.reflect.Array;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+import utils.Throwables;
+import utils.stream.BooleanFStream;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -19,9 +23,6 @@ import marmot.support.PBSerializable;
 import marmot.support.RecordScriptExecution;
 import marmot.type.ContainerDataType;
 import marmot.type.DataType;
-import utils.Throwables;
-import utils.Utilities;
-import utils.stream.BooleanFStream;
 
 
 /**
@@ -45,7 +46,7 @@ public class CollectToArrayColumn extends RecordLevelTransform
 	}
 	
 	private CollectToArrayColumn(String colDecl, RecordScript selectExpr) {
-		Utilities.checkNotNullArgument(selectExpr, "update script is null");
+		Preconditions.checkNotNullArgument(selectExpr, "update script is null");
 		
 		m_colDecl = colDecl;
 		m_script = selectExpr;

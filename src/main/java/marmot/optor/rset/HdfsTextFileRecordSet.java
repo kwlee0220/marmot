@@ -16,6 +16,10 @@ import org.apache.hadoop.io.compress.Decompressor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+import utils.StopWatch;
+import utils.stream.FStream;
+
 import marmot.Record;
 import marmot.RecordSchema;
 import marmot.RecordSet;
@@ -26,9 +30,6 @@ import marmot.rset.ConcatedRecordSet;
 import marmot.support.HadoopUtils;
 import marmot.support.ProgressReportable;
 import marmot.type.DataType;
-import utils.StopWatch;
-import utils.Utilities;
-import utils.stream.FStream;
 
 /**
  * 
@@ -43,8 +44,8 @@ public class HdfsTextFileRecordSet extends ConcatedRecordSet implements Progress
 	private int m_fileIdx = -1;
 	
 	public static HdfsTextFileRecordSet of(FileSystem fs, List<Path> start) {
-		Utilities.checkNotNullArgument(fs, "FileSystem is null");
-		Utilities.checkNotNullArgument(start, "start path is null");
+		Preconditions.checkNotNullArgument(fs, "FileSystem is null");
+		Preconditions.checkNotNullArgument(start, "start path is null");
 		
 		List<HdfsPath> hdfsPathes = FStream.from(start)
 											.map(path -> HdfsPath.of(fs, path))
@@ -53,7 +54,7 @@ public class HdfsTextFileRecordSet extends ConcatedRecordSet implements Progress
 	}
 	
 	public static HdfsTextFileRecordSet of(HdfsPath... start) {
-		Utilities.checkNotNullArguments(start, "start path is null");
+		Preconditions.checkNotNullArgument(start, "start path is null");
 		
 		return of(Arrays.asList(start));
 	}
@@ -63,7 +64,7 @@ public class HdfsTextFileRecordSet extends ConcatedRecordSet implements Progress
 	}
 	
 	private HdfsTextFileRecordSet(List<HdfsPath> start) {
-		Utilities.checkNotNullArgument(start, "start path is null");
+		Preconditions.checkNotNullArgument(start, "start path is null");
 		
 		setLogger(LoggerFactory.getLogger(HdfsTextFileRecordSet.class));
 		

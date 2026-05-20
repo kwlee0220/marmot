@@ -9,7 +9,7 @@ import java.sql.Types;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.mapreduce.Job;
 
-import utils.Utilities;
+import utils.Preconditions;
 import utils.jdbc.JdbcProcessor;
 import utils.stream.KeyValueFStream;
 
@@ -46,16 +46,20 @@ public class LoadJdbcTable extends AbstractRecordSetLoader implements MapReducea
 	
 	private LoadJdbcTable(String tableName, JdbcConnectOptions jdbcOpts,
 							LoadJdbcTableOptions opts) {
-		Utilities.checkNotNullArgument(jdbcOpts, "JdbcConnectionOptions is null");
-		Utilities.checkNotNullArgument(tableName, "target table name is null");
-		Utilities.checkNotNullArgument(opts, "LoadJdbcTableOptions is null");
+		Preconditions.checkNotNullArgument(jdbcOpts, "JdbcConnectionOptions is null");
+		Preconditions.checkNotNullArgument(tableName, "target table name is null");
+		Preconditions.checkNotNullArgument(opts, "LoadJdbcTableOptions is null");
 
 		m_tableName = tableName;
 		m_jdbcOpts = jdbcOpts;
 		m_options = opts;
 		
-		m_jdbc = new JdbcProcessor(jdbcOpts.jdbcUrl(), jdbcOpts.user(),
-									jdbcOpts.passwd(), jdbcOpts.driverClassName());
+		m_jdbc = JdbcProcessor.builder()
+								.jdbcUrl(jdbcOpts.jdbcUrl())
+								.user(jdbcOpts.user())
+								.password(jdbcOpts.passwd())
+								.driverClassName(jdbcOpts.driverClassName())
+								.build();
 	}
 	
 	public String getTableName() {
@@ -75,8 +79,12 @@ public class LoadJdbcTable extends AbstractRecordSetLoader implements MapReducea
 		checkInitialized();
 		
 		Configuration conf = job.getConfiguration();
-		JdbcProcessor jdbc = new JdbcProcessor(m_jdbcOpts.jdbcUrl(), m_jdbcOpts.user(),
-												m_jdbcOpts.passwd(), m_jdbcOpts.driverClassName());
+		JdbcProcessor jdbc = JdbcProcessor.builder()
+											.jdbcUrl(m_jdbcOpts.jdbcUrl())
+											.user(m_jdbcOpts.user())
+											.password(m_jdbcOpts.passwd())
+											.driverClassName(m_jdbcOpts.driverClassName())
+											.build();
 		JdbcInputFormat.setJdbcString(conf, jdbc);
 		JdbcInputFormat.setJdbcInputTableName(conf, m_tableName);
 		m_options.selectExpr().ifPresent(expr -> JdbcInputFormat.setJdbcInputColumnsExpr(conf, expr));

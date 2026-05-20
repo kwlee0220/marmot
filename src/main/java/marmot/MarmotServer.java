@@ -12,6 +12,13 @@ import org.apache.hadoop.fs.Path;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+import utils.Throwables;
+import utils.Tuple;
+import utils.UnitUtils;
+import utils.func.FOption;
+import utils.func.Try;
+
 import marmot.dataset.Catalogs;
 import marmot.dataset.DataSet;
 import marmot.dataset.DataSetExistsException;
@@ -35,12 +42,6 @@ import marmot.optor.RecordSetOperator;
 import marmot.optor.StoreDataSet;
 import marmot.optor.StoreDataSetOptions;
 import marmot.support.RecordSetOperatorChain;
-import utils.Throwables;
-import utils.Tuple;
-import utils.UnitUtils;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.func.Try;
 
 
 /**
@@ -112,8 +113,8 @@ public class MarmotServer implements MarmotRuntime {
 
 	public DataSetImpl createDataSet(String dsId, Plan plan, StoreDataSetOptions opts)
 		throws DataSetExistsException {
-		Utilities.checkNotNullArgument(dsId, "dataset id is null");
-		Utilities.checkNotNullArgument(plan, "populating plan is null");
+		Preconditions.checkNotNullArgument(dsId, "dataset id is null");
+		Preconditions.checkNotNullArgument(plan, "populating plan is null");
 		
 		// Plan의 마지막 operator가 store가 아닌 경우 이를 추가한다ㅏ.
 		Tuple<Plan,RecordSchema> adjusted = adjustPlanForStore(plan, FOption.empty(), dsId, opts);
@@ -477,7 +478,7 @@ public class MarmotServer implements MarmotRuntime {
 	}
 
 	public RecordSchema getMarmotFileRecordSchema(String path) {
-		Utilities.checkNotNullArgument(path, "MarmotFile path is null");
+		Preconditions.checkNotNullArgument(path, "MarmotFile path is null");
 		
 		LoadMarmotFile load = LoadMarmotFile.from(path);
 		load.initialize(this);

@@ -1,7 +1,5 @@
 package marmot.optor.geo.index;
 
-import static utils.Utilities.checkNotNullArgument;
-
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Lists;
 
+import utils.Preconditions;
 import utils.UnitUtils;
 import utils.func.FOption;
 import utils.stream.FStream;
@@ -66,7 +65,7 @@ public class LoadSpatialIndexedFile extends AbstractRecordSetLoader
 	@Nullable FOption<Envelope> m_range84 = null;
 	
 	public LoadSpatialIndexedFile(String dsId) {
-		checkNotNullArgument(dsId, "dataset id is null");
+		Preconditions.checkNotNullArgument(dsId, "dataset id is null");
 		
 		m_dsId = dsId;
 	}

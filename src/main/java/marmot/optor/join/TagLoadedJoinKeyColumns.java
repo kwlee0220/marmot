@@ -11,8 +11,11 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.MultipleInputs;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
 import com.google.common.collect.Lists;
+
+import utils.CSV;
+import utils.Preconditions;
+import utils.func.UncheckedFunction;
 
 import marmot.MarmotCore;
 import marmot.Record;
@@ -41,9 +44,6 @@ import marmot.rset.AbstractRecordSet;
 import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.CSV;
-import utils.Utilities;
-import utils.func.UncheckedFunction;
 
 /**
  * 
@@ -68,16 +68,16 @@ public class TagLoadedJoinKeyColumns extends AbstractRecordSetLoader
 	TagLoadedJoinKeyColumns(String leftDataSet, String leftJoinCols,
 							String rightDataSet, String rightJoinCols,
 							String outputColumns, JoinOptions opts) {
-		Utilities.checkNotNullArgument(leftDataSet,  "left dataset id is null");
-		Utilities.checkNotNullArgument(rightDataSet,  "right dataset id is null");
-		Utilities.checkArgument(leftJoinCols != null, "left join columns are null");
-		Utilities.checkArgument(rightJoinCols != null, "right join columns are null");
+		Preconditions.checkNotNullArgument(leftDataSet,  "left dataset id is null");
+		Preconditions.checkNotNullArgument(rightDataSet,  "right dataset id is null");
+		Preconditions.checkArgument(leftJoinCols != null, "left join columns are null");
+		Preconditions.checkArgument(rightJoinCols != null, "right join columns are null");
 		
 		String[] leftJoinColNames = CSV.parseCsvAsArray(leftJoinCols);
 		String[] rightJoinColNames = CSV.parseCsvAsArray(rightJoinCols);
-		Utilities.checkArgument(leftJoinColNames.length > 0, "left join columns are empty");
-		Utilities.checkArgument(rightJoinColNames.length > 0, "right join columns are empty");
-		Utilities.checkArgument(leftJoinColNames.length == rightJoinColNames.length,
+		Preconditions.checkArgument(leftJoinColNames.length > 0, "left join columns are empty");
+		Preconditions.checkArgument(rightJoinColNames.length > 0, "right join columns are empty");
+		Preconditions.checkArgument(leftJoinColNames.length == rightJoinColNames.length,
 									"both join columns does not match");
 		Preconditions.checkArgument(outputColumns != null,  "output columns is null");
 		Preconditions.checkArgument(opts != null,  "JoinOptions is null");

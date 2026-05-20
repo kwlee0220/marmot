@@ -3,6 +3,9 @@ package marmot.optor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+import utils.Throwables;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -13,8 +16,6 @@ import marmot.optor.support.RecordLevelTransform;
 import marmot.proto.optor.UpdateProto;
 import marmot.support.PBSerializable;
 import marmot.support.RecordScriptExecution;
-import utils.Throwables;
-import utils.Utilities;
 
 
 /**
@@ -35,7 +36,7 @@ public class Update extends RecordLevelTransform implements PBSerializable<Updat
 	}
 	
 	private Update(RecordScript script) {
-		Utilities.checkNotNullArgument(script, "update script is null");
+		Preconditions.checkNotNullArgument(script, "update script is null");
 		
 		m_script = script;
 		m_updateExec = RecordScriptExecution.of(script);

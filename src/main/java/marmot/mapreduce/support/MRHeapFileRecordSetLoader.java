@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.ImmutableList;
 
-import utils.Utilities;
+import utils.Preconditions;
 import utils.func.UncheckedConsumer;
 import utils.func.UncheckedFunction;
 import utils.stream.FStream;
@@ -43,8 +43,8 @@ public abstract class MRHeapFileRecordSetLoader extends AbstractRecordSetLoader
 	protected abstract Class<? extends InputFormat> getInputFormatClass();
 
 	protected MRHeapFileRecordSetLoader(Iterable<String> pathList, LoadOptions opts) {
-		Utilities.checkNotNullArgument(pathList, "pathList is null");
-		Utilities.checkNotNullArgument(opts, "LoadOptions is null");
+		Preconditions.checkNotNullArgument(pathList, "pathList is null");
+		Preconditions.checkNotNullArgument(opts, "LoadOptions is null");
 		
 		m_pathList = FStream.from(pathList)
 							.map(Path::new)

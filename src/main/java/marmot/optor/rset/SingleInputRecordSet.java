@@ -3,14 +3,15 @@ package marmot.optor.rset;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+import utils.StopWatch;
+
 import marmot.RecordSchema;
 import marmot.RecordSet;
 import marmot.optor.RecordSetFunction;
 import marmot.rset.AbstractRecordSet;
 import marmot.support.DefaultRecord;
 import marmot.support.ProgressReportable;
-import utils.StopWatch;
-import utils.Utilities;
 
 
 /**
@@ -28,8 +29,8 @@ public abstract class SingleInputRecordSet<T extends RecordSetFunction>
 	private boolean m_finalProgressReported = false;
 	
 	protected SingleInputRecordSet(T func, RecordSet input) {
-		Utilities.checkNotNullArgument(func, "func is null");
-		Utilities.checkNotNullArgument(input, "input is null");
+		Preconditions.checkNotNullArgument(func, "func is null");
+		Preconditions.checkNotNullArgument(input, "input is null");
 		
 		m_optor = func;
 		m_input = input;

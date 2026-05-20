@@ -18,7 +18,7 @@ import io.grpc.stub.StreamObserver;
 import utils.LoggerSettable;
 import utils.Throwables;
 import utils.async.AbstractThreadedExecution;
-import utils.async.Guard;
+import utils.thread.Guard;
 
 import marmot.proto.service.UpChunkRequest;
 import marmot.proto.service.UpChunkResponse;

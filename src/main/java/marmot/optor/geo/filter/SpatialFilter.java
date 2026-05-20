@@ -3,6 +3,8 @@ package marmot.optor.geo.filter;
 import org.locationtech.jts.geom.Geometry;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -11,7 +13,6 @@ import marmot.RecordSet;
 import marmot.optor.support.Filter;
 import marmot.plan.PredicateOptions;
 import marmot.type.GeometryDataType;
-import utils.Utilities;
 
 /**
  * 
@@ -26,7 +27,7 @@ public abstract class SpatialFilter<T extends SpatialFilter<T>> extends Filter<T
 	
 	protected SpatialFilter(String geomCol, PredicateOptions opts) {
 		super(opts);
-		Utilities.checkNotNullArgument(geomCol, "geometry column is null");
+		Preconditions.checkNotNullArgument(geomCol, "geometry column is null");
 		
 		m_geomCol = geomCol;
 		setLogger(LoggerFactory.getLogger(SpatialFilter.class));

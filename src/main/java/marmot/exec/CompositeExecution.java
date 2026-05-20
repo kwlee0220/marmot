@@ -6,7 +6,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.annotation.concurrent.GuardedBy;
 
-import utils.async.Guard;
+import utils.thread.Guard;
 import utils.func.CheckedRunnable;
 import utils.func.FOption;
 

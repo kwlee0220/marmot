@@ -12,8 +12,8 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 
 import utils.KeyValue;
+import utils.Preconditions;
 import utils.Tuple;
-import utils.Utilities;
 import utils.stream.FStream;
 
 import marmot.Column;
@@ -62,8 +62,8 @@ public abstract class NestedLoopSpatialJoin<T extends NestedLoopSpatialJoin<T>>
 	protected abstract RecordSet doInnerLoop(NestedLoopMatch match);
 	
 	protected NestedLoopSpatialJoin(String geomCol, String paramDsId, SpatialJoinOptions opts) {
-		Utilities.checkNotNullArgument(geomCol, "input Geometry column name");
-		Utilities.checkNotNullArgument(paramDsId, "inner DataSet id");
+		Preconditions.checkNotNullArgument(geomCol, "input Geometry column name");
+		Preconditions.checkNotNullArgument(paramDsId, "inner DataSet id");
 		
 		m_geomColName = geomCol;
 		m_paramDsId = paramDsId;

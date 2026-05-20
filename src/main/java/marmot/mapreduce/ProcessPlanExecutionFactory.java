@@ -11,12 +11,13 @@ import org.apache.commons.lang.text.StrSubstitutor;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 
+import utils.Preconditions;
+
 import marmot.MarmotCore;
 import marmot.Plan;
 import marmot.RecordSchema;
 import marmot.exec.PlanExecution;
 import marmot.exec.PlanExecutionFactory;
-import utils.Utilities;
 
 /**
  * 
@@ -43,8 +44,8 @@ public class ProcessPlanExecutionFactory implements PlanExecutionFactory {
 	}
 	
 	public ProcessPlanExecutionFactory(MarmotCore marmot, File homeDir) {
-		Utilities.checkNotNullArgument(marmot, "MarmotRuntime");
-		Utilities.checkNotNullArgument(homeDir, "Marmot home directory");
+		Preconditions.checkNotNullArgument(marmot, "MarmotRuntime");
+		Preconditions.checkNotNullArgument(homeDir, "Marmot home directory");
 		
 		m_marmot = marmot;
 		m_homeDir = homeDir;

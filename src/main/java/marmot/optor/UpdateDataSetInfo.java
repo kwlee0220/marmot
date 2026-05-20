@@ -2,6 +2,8 @@ package marmot.optor;
 
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+
 import marmot.MarmotCore;
 import marmot.RecordSchema;
 import marmot.RecordSet;
@@ -10,7 +12,6 @@ import marmot.io.DataSetPartitionInfo;
 import marmot.optor.support.AbstractRecordSetConsumer;
 import marmot.proto.optor.UpdateDataSetInfoProto;
 import marmot.support.PBSerializable;
-import utils.Utilities;
 
 /**
  * 
@@ -34,11 +35,11 @@ public class UpdateDataSetInfo extends AbstractRecordSetConsumer
 	@Override
 	public void consume(RecordSet rset) {
 		checkInitialized();
-		Utilities.checkNotNullArgument(rset, "rset is null");
+		Preconditions.checkNotNullArgument(rset, "rset is null");
 		
 		DataSetPartitionInfo total = rset.fstream()
 										.map(DataSetPartitionInfo::from)
-										.reduce(DataSetPartitionInfo::plus);
+										.reduce(DataSetPartitionInfo::plus).get();
 		getLogger().info("done: {}", this);
 		
 		m_marmot.getCatalog().updateDataSetInfo(m_dsId, total);

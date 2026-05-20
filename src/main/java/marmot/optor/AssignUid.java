@@ -1,6 +1,6 @@
 package marmot.optor;
 
-import com.google.common.base.Preconditions;
+import utils.Preconditions;
 
 import marmot.MarmotCore;
 import marmot.Record;
@@ -11,7 +11,6 @@ import marmot.optor.support.RecordLevelTransform;
 import marmot.proto.optor.AssignUidProto;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.Utilities;
 
 
 /**
@@ -34,7 +33,7 @@ public class AssignUid extends RecordLevelTransform
 	}
 	
 	public AssignUid(String colName, int nrecs) {
-		Utilities.checkNotNullArgument(colName, "id column");
+		Preconditions.checkNotNullArgument(colName, "id column");
 		Preconditions.checkArgument(nrecs > 0, "invalid maximum records per split");
 
 		m_uidColumn = colName;

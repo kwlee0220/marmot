@@ -1,13 +1,14 @@
 package marmot.optor.reducer;
 
+import utils.Preconditions;
+import utils.func.FOption;
+
 import marmot.Column;
 import marmot.Record;
 import marmot.RecordSchema;
 import marmot.optor.AggregateFunction;
 import marmot.optor.AggregateType;
 import marmot.type.DataType;
-import utils.Utilities;
-import utils.func.FOption;
 
 
 /**
@@ -47,7 +48,7 @@ public class ConcatString implements ValueAggregate {
 
 	@Override
 	public void setOutputColumn(String colName) {
-		Utilities.checkNotNullArgument(colName, "colName is null");
+		Preconditions.checkNotNullArgument(colName, "colName is null");
 		
 		m_outColName = colName.toLowerCase();
 	}

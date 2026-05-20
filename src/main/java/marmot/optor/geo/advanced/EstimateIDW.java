@@ -7,7 +7,10 @@ import java.util.List;
 import org.locationtech.jts.geom.Geometry;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
+import utils.Preconditions;
+import utils.UnitUtils;
+import utils.func.FOption;
+import utils.stream.FStream;
 
 import marmot.Column;
 import marmot.MarmotCore;
@@ -22,10 +25,6 @@ import marmot.support.DataUtils;
 import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.UnitUtils;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.stream.FStream;
 
 
 /**
@@ -48,8 +47,8 @@ public class EstimateIDW extends SpatialKnnJoin<EstimateIDW>
 						double radius, int topK, String outColumn, FOption<Double> power) {
 		super(geomColumn, paramDsId, radius, FOption.of(topK), SpatialJoinOptions.DEFAULT);
 
-		Utilities.checkNotNullArgument(valueColumn, "value column is null");
-		Utilities.checkNotNullArgument(outColumn, "density column is null");
+		Preconditions.checkNotNullArgument(valueColumn, "value column is null");
+		Preconditions.checkNotNullArgument(outColumn, "density column is null");
 
 		m_valueColumn = valueColumn;
 		m_outColumn = outColumn;
@@ -93,7 +92,7 @@ public class EstimateIDW extends SpatialKnnJoin<EstimateIDW>
 									.toList();
 		if ( interms.size() > 0 ) {
 			Interm accum = FStream.from(interms)
-									.reduce((i1, i2) -> i1.add(i2));
+									.reduce((i1, i2) -> i1.add(i2)).get();
 			double estimation = accum.m_numerator / accum.m_denominator;
 			output.set(m_outColIdx, estimation);
 		}

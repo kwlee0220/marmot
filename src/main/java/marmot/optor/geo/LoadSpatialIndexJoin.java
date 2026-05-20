@@ -11,6 +11,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Maps;
 
+import utils.Preconditions;
+import utils.StopWatch;
+import utils.stream.FStream;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -37,9 +41,6 @@ import marmot.rset.AbstractRecordSet;
 import marmot.support.EnvelopeTaggedRecord;
 import marmot.support.PBSerializable;
 import marmot.support.ProgressReportable;
-import utils.StopWatch;
-import utils.Utilities;
-import utils.stream.FStream;
 
 /**
  * {@link LoadSpatialIndexJoin}연산은 지정된 HDFS 파일 (또는 복수개의 HDFS 파일들)을 읽어 저장된
@@ -60,9 +61,9 @@ public class LoadSpatialIndexJoin extends AbstractRecordSetLoader
 	private ColumnSelector m_selector;
 	
 	public LoadSpatialIndexJoin(String leftDataSet, String rightDataSet, SpatialJoinOptions opts) {
-		Utilities.checkNotNullArgument(leftDataSet, "Left dataset id");
-		Utilities.checkNotNullArgument(rightDataSet, "Right dataset id");
-		Utilities.checkNotNullArgument(opts, "SpatialJoinOptions is null");
+		Preconditions.checkNotNullArgument(leftDataSet, "Left dataset id");
+		Preconditions.checkNotNullArgument(rightDataSet, "Right dataset id");
+		Preconditions.checkNotNullArgument(opts, "SpatialJoinOptions is null");
 
 		m_leftDsId = leftDataSet;
 		m_rightDsId = rightDataSet;

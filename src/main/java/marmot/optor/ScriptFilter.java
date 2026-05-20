@@ -4,6 +4,8 @@ import java.util.Map;
 
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -15,7 +17,6 @@ import marmot.proto.optor.ScriptFilterProto;
 import marmot.support.DataUtils;
 import marmot.support.PBSerializable;
 import marmot.support.RecordScriptExecution;
-import utils.Utilities;
 
 
 /**
@@ -31,7 +32,7 @@ public class ScriptFilter extends Filter<ScriptFilter>
 	public ScriptFilter(RecordScript script) {
 		super(PredicateOptions.DEFAULT);
 		
-		Utilities.checkNotNullArgument(script, "predicate is null");
+		Preconditions.checkNotNullArgument(script, "predicate is null");
 		
 		m_script = script;
 		m_filterExec = RecordScriptExecution.of(script);
@@ -41,9 +42,8 @@ public class ScriptFilter extends Filter<ScriptFilter>
 
 	@Override
 	public void initialize(MarmotCore marmot, RecordSchema inputSchema) {
-		Utilities.checkNotNullArgument(marmot, "MarmotServer is null");
-		Utilities.checkNotNullArgument(inputSchema,
-									() -> String.format("op: %s: input RecordSchema is null", this));
+		Preconditions.checkNotNullArgument(marmot, "MarmotServer is null");
+		Preconditions.checkNotNullArgument(inputSchema, "op: %s: input RecordSchema is null", this);
 		
 		Map<String,Object> args = m_filterExec.getArgumentAll();
 		m_vrFact = new ColumnVariableResolverFactory(inputSchema, args).readOnly(true);

@@ -4,7 +4,7 @@ import java.util.UUID;
 
 import org.apache.hadoop.fs.Path;
 
-import utils.Utilities;
+import utils.Preconditions;
 
 import marmot.MarmotCore;
 import marmot.RecordSchema;
@@ -26,10 +26,10 @@ public class StoreDataSet extends CompositeRecordSetConsumer
 	private boolean m_deleted = false;
 	
 	public StoreDataSet(String dsId, StoreDataSetOptions opts) {
-		Utilities.checkNotNullArgument(dsId, "target dataset is null");
-		Utilities.checkNotNullArgument(opts, "StoreDataSetOptions is null");
-		Utilities.checkArgument(!(opts.append().orElse(false) && opts.force()),
-								() -> "Both 'append' and 'force' should not be true");
+		Preconditions.checkNotNullArgument(dsId, "target dataset is null");
+		Preconditions.checkNotNullArgument(opts, "StoreDataSetOptions is null");
+		Preconditions.checkArgument(!(opts.append().orElse(false) && opts.force()),
+									"Both 'append' and 'force' should not be true");
 		
 		m_dsId = dsId;
 		m_options = opts;

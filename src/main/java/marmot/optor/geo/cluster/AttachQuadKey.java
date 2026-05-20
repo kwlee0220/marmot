@@ -8,6 +8,11 @@ import javax.annotation.Nullable;
 import org.locationtech.jts.geom.Envelope;
 import org.locationtech.jts.geom.Geometry;
 
+import utils.CSV;
+import utils.Preconditions;
+import utils.func.FOption;
+import utils.stream.FStream;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -22,10 +27,6 @@ import marmot.protobuf.PBUtils;
 import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.CSV;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.stream.FStream;
 
 
 /**
@@ -53,8 +54,8 @@ public class AttachQuadKey extends FlatTransform implements PBSerializable<Attac
 	
 	public AttachQuadKey(GeometryColumnInfo gcInfo, Set<String> qkeys, FOption<Envelope> validRange,
 							boolean bindOutlier, boolean bindOnlyToOwner) {
-		Utilities.checkNotNullArgument(gcInfo, "GeometryColumnInfo");
-		Utilities.checkNotNullArgument(qkeys, "QueryKey list");
+		Preconditions.checkNotNullArgument(gcInfo, "GeometryColumnInfo");
+		Preconditions.checkNotNullArgument(qkeys, "QueryKey list");
 		
 		m_gcInfo = gcInfo;
 		m_qkeys = qkeys;

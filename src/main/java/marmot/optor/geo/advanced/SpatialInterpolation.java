@@ -10,6 +10,12 @@ import org.slf4j.LoggerFactory;
 import com.google.common.collect.Lists;
 import com.google.common.primitives.Ints;
 
+import utils.CSV;
+import utils.Preconditions;
+import utils.UnitUtils;
+import utils.func.FOption;
+import utils.stream.FStream;
+
 import marmot.Column;
 import marmot.MarmotCore;
 import marmot.Record;
@@ -24,11 +30,6 @@ import marmot.support.DataUtils;
 import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
 import marmot.type.DataType;
-import utils.CSV;
-import utils.UnitUtils;
-import utils.Utilities;
-import utils.func.FOption;
-import utils.stream.FStream;
 
 
 /**
@@ -51,9 +52,9 @@ public class SpatialInterpolation extends SpatialKnnJoin<SpatialInterpolation>
 								String methodId) {
 		super(geomColumn, paramDsId, radius, topK, SpatialJoinOptions.DEFAULT);
 
-		Utilities.checkNotNullArgument(valueColumns, "value columns");
-		Utilities.checkNotNullArgument(outColumns, "output columns");
-		Utilities.checkNotNullArgument(methodId, "interpolation method");
+		Preconditions.checkNotNullArgument(valueColumns, "value columns");
+		Preconditions.checkNotNullArgument(outColumns, "output columns");
+		Preconditions.checkNotNullArgument(methodId, "interpolation method");
 
 		m_valueColumns = valueColumns;
 		m_outColumns = outColumns;

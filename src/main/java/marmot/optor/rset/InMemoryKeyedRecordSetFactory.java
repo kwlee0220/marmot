@@ -5,10 +5,8 @@ import java.util.List;
 
 import org.slf4j.Logger;
 
-import com.google.common.base.Preconditions;
-
+import utils.Preconditions;
 import utils.StopWatch;
-import utils.Utilities;
 import utils.func.FOption;
 import utils.stream.KeyValueFStream;
 import utils.stream.KeyedGroups;
@@ -44,8 +42,8 @@ public class InMemoryKeyedRecordSetFactory implements KeyedRecordSetFactory {
 	public InMemoryKeyedRecordSetFactory(RecordSet src, MultiColumnKey keyCols,
 										MultiColumnKey tagCols, MultiColumnKey orderCols,
 										boolean sortByKey) {
-		Utilities.checkNotNullArgument(keyCols, "Key columns should not be null");
-		Utilities.checkNotNullArgument(tagCols, "Tag key columns should not be null");
+		Preconditions.checkNotNullArgument(keyCols, "Key columns should not be null");
+		Preconditions.checkNotNullArgument(tagCols, "Tag key columns should not be null");
 		
 		m_src = src;
 		m_keyCols = keyCols;
@@ -149,8 +147,8 @@ public class InMemoryKeyedRecordSetFactory implements KeyedRecordSetFactory {
 		private long m_count = 0;
 		
 		InMemoryKeyedRecordSet(InMemoryKeyedRecordSetFactory fact, RecordKey key, List<Record> records) {
-			Utilities.checkNotNullArgument(key, "Group key");
-			Utilities.checkNotNullArgument(records, "Group RecordSet");
+			Preconditions.checkNotNullArgument(key, "Group key");
+			Preconditions.checkNotNullArgument(records, "Group RecordSet");
 			Preconditions.checkArgument(records.size() > 0, "Group RecordSet is empty");
 			
 			m_fact = fact;

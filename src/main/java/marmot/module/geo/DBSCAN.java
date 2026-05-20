@@ -3,13 +3,14 @@ package marmot.module.geo;
 import static marmot.optor.AggregateFunction.COUNT;
 import static marmot.optor.JoinOptions.INNER_JOIN;
 import static marmot.optor.StoreDataSetOptions.FORCE;
-import static utils.Utilities.checkNotNullArgument;
 
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import org.apache.hadoop.fs.Path;
+
+import utils.Preconditions;
 
 import marmot.BindDataSetOptions;
 import marmot.MarmotCore;
@@ -62,11 +63,11 @@ public class DBSCAN implements MarmotModule {
 		m_marmot = marmot;
 		m_params = DBSCANParameters.fromMap(paramsMap);
 		
-		checkNotNullArgument(m_params.inputDataSet(), "parameter is missing: " + DBSCANParameters.INPUT_DATASET);
-		checkNotNullArgument(m_params.outputDataSet(), "parameter is missing: " + DBSCANParameters.OUTPUT_DATASET);
-		checkNotNullArgument(m_params.idColumn(), "parameter is missing: " + DBSCANParameters.ID_COLUMN);
-		checkNotNullArgument(m_params.clusterColumn(), "parameter is missing: " + DBSCANParameters.CLUSTER_COLUMN);
-		checkNotNullArgument(m_params.typeColumn(), "parameter is missing: " + DBSCANParameters.TYPE_COLUMN);
+		Preconditions.checkNotNullArgument(m_params.inputDataSet(), "parameter is missing: " + DBSCANParameters.INPUT_DATASET);
+		Preconditions.checkNotNullArgument(m_params.outputDataSet(), "parameter is missing: " + DBSCANParameters.OUTPUT_DATASET);
+		Preconditions.checkNotNullArgument(m_params.idColumn(), "parameter is missing: " + DBSCANParameters.ID_COLUMN);
+		Preconditions.checkNotNullArgument(m_params.clusterColumn(), "parameter is missing: " + DBSCANParameters.CLUSTER_COLUMN);
+		Preconditions.checkNotNullArgument(m_params.typeColumn(), "parameter is missing: " + DBSCANParameters.TYPE_COLUMN);
 		
 		DataSet input = marmot.getDataSet(m_params.inputDataSet());
 		m_inputSchema = input.getRecordSchema();

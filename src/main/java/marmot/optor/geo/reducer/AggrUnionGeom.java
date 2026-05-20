@@ -11,6 +11,8 @@ import org.locationtech.jts.geom.Polygon;
 
 import com.google.common.collect.Lists;
 
+import utils.Preconditions;
+
 import marmot.Column;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -20,7 +22,6 @@ import marmot.optor.reducer.ValueAggregate;
 import marmot.optor.support.SafeUnion;
 import marmot.support.GeoUtils;
 import marmot.type.DataType;
-import utils.Utilities;
 
 
 /**
@@ -59,7 +60,7 @@ public class AggrUnionGeom implements ValueAggregate {
 
 	@Override
 	public void setOutputColumn(String colName) {
-		Utilities.checkNotNullArgument(colName, "colName is null");
+		Preconditions.checkNotNullArgument(colName, "colName is null");
 		
 		m_outColName = colName;
 	}

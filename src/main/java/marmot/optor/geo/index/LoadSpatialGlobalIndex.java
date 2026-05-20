@@ -6,6 +6,8 @@ import org.apache.hadoop.fs.Path;
 import org.locationtech.jts.geom.Envelope;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -22,7 +24,6 @@ import marmot.optor.support.AbstractRecordSetLoader;
 import marmot.proto.optor.LoadSpatialGlobalIndexProto;
 import marmot.rset.AbstractRecordSet;
 import marmot.support.PBSerializable;
-import utils.Utilities;
 
 /**
  * {@code LoadClusterIndexFile}연산은 지정된 HDFS 파일 (또는 복수개의 HDFS 파일들)에 저장된
@@ -35,7 +36,7 @@ public class LoadSpatialGlobalIndex extends AbstractRecordSetLoader
 	private final String m_dsId;
 	
 	public LoadSpatialGlobalIndex(String dsId) {
-		Utilities.checkNotNullArgument(dsId, "dsId is null");
+		Preconditions.checkNotNullArgument(dsId, "dsId is null");
 		
 		m_dsId = dsId;
 		setLogger(LoggerFactory.getLogger(LoadSpatialGlobalIndex.class));

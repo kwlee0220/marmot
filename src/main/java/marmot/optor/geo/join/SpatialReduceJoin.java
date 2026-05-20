@@ -1,5 +1,7 @@
 package marmot.optor.geo.join;
 
+import utils.Preconditions;
+
 import marmot.MarmotCore;
 import marmot.Record;
 import marmot.RecordSchema;
@@ -11,7 +13,6 @@ import marmot.proto.optor.SpatialReduceJoinProto;
 import marmot.rset.AbstractRecordSet;
 import marmot.support.DefaultRecord;
 import marmot.support.PBSerializable;
-import utils.Utilities;
 
 
 /**
@@ -25,7 +26,7 @@ public class SpatialReduceJoin extends NestedLoopSpatialJoin<SpatialReduceJoin>
 	public SpatialReduceJoin(String inputGeomCol, String paramDsId, RecordSetFunction reducer,
 							SpatialJoinOptions opts) {
 		super(inputGeomCol, paramDsId, opts);
-		Utilities.checkNotNullArgument(reducer, "reducer is null");
+		Preconditions.checkNotNullArgument(reducer, "reducer is null");
 		
 		m_reducer = reducer;
 	}

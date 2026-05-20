@@ -3,11 +3,12 @@ package marmot.optor.support;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.LoggerSettable;
+import utils.Preconditions;
+
 import marmot.MarmotCore;
 import marmot.RecordSchema;
 import marmot.optor.RecordSetLoader;
-import utils.LoggerSettable;
-import utils.Utilities;
 
 /**
  * 
@@ -45,8 +46,8 @@ public abstract class AbstractRecordSetLoader implements RecordSetLoader, Logger
 	}
 	
 	protected final void setInitialized(MarmotCore marmot, RecordSchema outputSchema)	{
-		Utilities.checkNotNullArgument(marmot, "marmot is null");
-		Utilities.checkNotNullArgument(outputSchema, "outputSchema is null");
+		Preconditions.checkNotNullArgument(marmot, "marmot is null");
+		Preconditions.checkNotNullArgument(outputSchema, "outputSchema is null");
 		
 		m_marmot = marmot;
 		m_outputSchema = outputSchema;

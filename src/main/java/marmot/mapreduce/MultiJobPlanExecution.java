@@ -16,7 +16,7 @@ import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import utils.async.CancellableWork;
-import utils.async.Guard;
+import utils.thread.Guard;
 import utils.func.FOption;
 import utils.func.Lazy;
 import utils.func.Try;

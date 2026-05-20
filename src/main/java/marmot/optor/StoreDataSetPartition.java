@@ -9,10 +9,8 @@ import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.output.NullOutputFormat;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.base.Preconditions;
-
+import utils.Preconditions;
 import utils.UnitUtils;
-import utils.Utilities;
 
 import marmot.MarmotCore;
 import marmot.Record;
@@ -49,8 +47,8 @@ public class StoreDataSetPartition extends AbstractRecordSetFunction
 	private Path m_mrOutputPath;
 	
 	public StoreDataSetPartition(Path filePath, StoreDataSetOptions opts) {
-		Utilities.checkNotNullArgument(filePath, "filePath is null");
-		Utilities.checkNotNullArgument(opts, "StoreDataSetOptions is null");
+		Preconditions.checkNotNullArgument(filePath, "filePath is null");
+		Preconditions.checkNotNullArgument(opts, "StoreDataSetOptions is null");
 		
 		m_filePath = filePath;
 		m_opts = opts;

@@ -1,6 +1,6 @@
 package marmot.optor;
 
-import com.google.common.base.Preconditions;
+import utils.Preconditions;
 
 import marmot.MarmotCore;
 import marmot.Record;
@@ -11,7 +11,6 @@ import marmot.optor.support.colexpr.ColumnSelector;
 import marmot.optor.support.colexpr.ColumnSelectorFactory;
 import marmot.proto.optor.ProjectProto;
 import marmot.support.PBSerializable;
-import utils.Utilities;
 
 
 /**
@@ -37,7 +36,7 @@ public class Project extends RecordLevelTransform implements PBSerializable<Proj
 	}
 	
 	public Project(MultiColumnKey keys) {
-		Utilities.checkNotNullArgument(keys, "keys is null");
+		Preconditions.checkNotNullArgument(keys, "keys is null");
 		
 		m_columnSelection = keys.streamKeyColumns()
 								.map(KeyColumn::name)

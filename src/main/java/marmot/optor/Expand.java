@@ -5,8 +5,8 @@ import java.util.Arrays;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import utils.Preconditions;
 import utils.Throwables;
-import utils.Utilities;
 import utils.func.FOption;
 
 import marmot.Column;
@@ -40,13 +40,13 @@ public class Expand extends RecordLevelTransform implements PBSerializable<Expan
 	private ColumnVariableResolverFactory m_vrFact;
 	
 	public Expand(String columnDecls) {
-		Utilities.checkNotNullArgument(columnDecls, "added columns are null");
+		Preconditions.checkNotNullArgument(columnDecls, "added columns are null");
 		
 		m_columnDecls = columnDecls;
 	}
 	
 	public Expand setInitializer(RecordScript initializer) {
-		Utilities.checkNotNullArgument(initializer, "column initializer is null");
+		Preconditions.checkNotNullArgument(initializer, "column initializer is null");
 		
 		m_script = FOption.ofNullable(initializer);
 		m_scriptExec = m_script.map(RecordScriptExecution::of);
