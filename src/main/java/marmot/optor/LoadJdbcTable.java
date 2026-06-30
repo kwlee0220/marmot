@@ -189,7 +189,7 @@ public class LoadJdbcTable extends AbstractRecordSetLoader implements MapReducea
 	
 	private RecordSchema buildRecordSchema() {
 		try {
-			return KeyValueFStream.from(m_jdbc.getColumns(m_tableName))
+			return KeyValueFStream.from(m_jdbc.getColumnInfos(m_tableName))
 									.mapValue((k,v) -> fromSqlType(v.type(), v.typeName()))
 									.fold(RecordSchema.builder(),
 												(b,kv) -> b.addColumn(kv.key(), kv.value()))

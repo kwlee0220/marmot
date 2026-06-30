@@ -816,7 +816,7 @@ public class MarmotCore implements PBSerializable<MarmotCoreProto>, Serializable
 
 	public FOption<Integer> getProgressReportIntervalSeconds() {
 		return getProperty("marmot.default.progress_report_interval")
-				.map(UnitUtils::parseDurationMillis)
+				.map(str -> UnitUtils.parseDuration(str).toMillis())
 				.map(millis -> (int)TimeUnit.MILLISECONDS.toSeconds(millis));
 	}
 

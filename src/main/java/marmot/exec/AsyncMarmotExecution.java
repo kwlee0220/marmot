@@ -1,6 +1,7 @@
 package marmot.exec;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import utils.async.AsyncResult;
 import utils.async.Execution;
@@ -72,6 +73,11 @@ public class AsyncMarmotExecution<T extends MarmotAnalysis> extends AbstractMarm
 
 	@Override
 	public boolean waitForFinished(long timeout, TimeUnit unit) throws InterruptedException {
-		return !m_exec.waitForFinished(timeout, unit).isRunning();
+		try {
+			return !m_exec.waitForFinished(timeout, unit).isRunning();
+		}
+		catch ( TimeoutException e ) {
+			return false;
+		}
 	}
 }

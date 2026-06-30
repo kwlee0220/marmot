@@ -40,7 +40,7 @@ public class ClusterChronicles extends AbstractRecordSetFunction
 	public ClusterChronicles(String colName, String outColName, String threshold) {
 		m_colName = colName;
 		m_outColName = outColName;
-		m_threshold = UnitUtils.parseDurationMillis(threshold);
+		m_threshold = UnitUtils.parseDuration(threshold).toMillis();
 	}
 	
 	public long getDuration() {
