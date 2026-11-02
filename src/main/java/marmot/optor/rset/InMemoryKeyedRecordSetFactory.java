@@ -119,7 +119,7 @@ public class InMemoryKeyedRecordSetFactory implements KeyedRecordSetFactory {
 			
 			KeyValueFStream<RecordKey,List<Record>> groups = keyeds.fstream();
 			if ( m_orderCols.length() > 0 ) {
-				groups = groups.mapValue(this::sortValues);
+				groups = groups.mapValueWithKey(this::sortValues);
 			}
 			
 			if ( m_sortByKey ) {
