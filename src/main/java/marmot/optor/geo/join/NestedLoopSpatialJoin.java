@@ -216,7 +216,7 @@ public abstract class NestedLoopSpatialJoin<T extends NestedLoopSpatialJoin<T>>
 			m_output = m_input.fstream()
 							.map(outer -> sortOut(qkBinder, outer))
 							.filter(kv -> kv.key() != 0)
-							.toKeyValueStream(kv -> kv)
+							.mapToKeyValue(kv -> kv)
 							.liftKeyValues(inStrm -> new FindBiggestGroupWithinWindow<>(inStrm, 2 * MAX_WINDOW_SIZE))
 //							.findBiggestGroupWithinWindow(2 * MAX_WINDOW_SIZE, 2 * MAX_WINDOW_SIZE)
 							.flatMap(kv -> kv.key() == 1 ? joinWithClustering(kv.value()) : joinWithoutClustering(kv.value()));
@@ -254,7 +254,7 @@ public abstract class NestedLoopSpatialJoin<T extends NestedLoopSpatialJoin<T>>
 		
 		private FStream<Record> joinWithClustering(List<Tuple<Record,List<String>>> list) {
 			return FStream.from(list)
-							.toKeyValueStream(tup -> KeyValue.of(tup._2.get(0), tup._1))
+							.mapToKeyValue(tup -> KeyValue.of(tup._2.get(0), tup._1))
 							.liftKeyValues(inStrm -> new FindBiggestGroupWithinWindow<>(inStrm, MAX_WINDOW_SIZE, 1))
 //							.findBiggestGroupWithinWindow(MAX_WINDOW_SIZE, 1)
 							.map(kv -> new ClusteringNLJoinJob(kv.key(), kv.value()))
@@ -298,7 +298,7 @@ public abstract class NestedLoopSpatialJoin<T extends NestedLoopSpatialJoin<T>>
 									= FStream.from(records)
 											.flatMap(t -> FStream.from(t._2)
 																.map(k -> KeyValue.of(k, t._1)))
-											.toKeyValueStream(Function.identity())
+											.mapToKeyValue(Function.identity())
 											.groupByKey()
 											.fstream()
 											.max(kv -> kv.value().size())

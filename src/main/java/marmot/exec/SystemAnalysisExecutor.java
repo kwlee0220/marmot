@@ -58,7 +58,7 @@ class SystemAnalysisExecutor {
 		String dsId = args.get(0);
 		Map<String,String> argMap = FStream.from(args)
 											.drop(1)
-											.toKeyValueStream(KeyValue::parse)
+											.mapToKeyValue(KeyValue::parse)
 											.toMap();
 		String countStr = argMap.get("workers");
 		
