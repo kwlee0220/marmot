@@ -74,7 +74,7 @@ public class CreateThumbnail extends AbstractRecordSetFunction
 	
 	private FStream<Record> selectByRandom(RecordSet input, int nrecords) {
 		return input.fstream()
-					.sample(nrecords, m_ratio)
+					.sample(nrecords, m_ratio, 1)
 					.shuffle();
 	}
 	

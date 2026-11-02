@@ -102,7 +102,7 @@ class ThumbnailSelectionRecordSet extends ConcatedRecordSet
 		
 		List<Record> sampled = m_source.readSpatialCluster(quadKey)
 										.fstream()
-										.sample(total, m_ratio)
+										.sample(total, m_ratio, 1)
 										.toList();
 		List<Record> selecteds = Utilities.shuffle(sampled);
 		return RecordSet.from(m_schema,

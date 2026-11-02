@@ -123,12 +123,12 @@ public class Normalize implements MarmotModule {
 			Record stats = m_marmot.executeToRecord(plan).get();
 			
 			String initExpr1 = FStream.of(stats.getAll())
-									.buffer(2, 2)
+									.window(2, 2)
 									.map(pair -> (double)pair.get(1) - (double)pair.get(0))
 									.map(Object::toString)
 									.join(",", "$total = [", "]");
 			String initExpr2 = FStream.of(stats.getAll())
-									.buffer(2, 2)
+									.window(2, 2)
 									.map(pair -> (double)pair.get(0))
 									.map(Object::toString)
 									.join(",", "$min = [", "]");

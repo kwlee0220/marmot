@@ -123,7 +123,7 @@ public class StoreAsGHdfs extends AbstractRecordSetConsumer
 	private GObject toGObject(Record record) {
 		ArrayList<Object> columnList = record.fstream()
 											.values()
-											.toList();
+											.toCollection(new ArrayList<>());
 		Envelope bounds = record.getGeometry(m_geomColIdx).getEnvelopeInternal();
 		return new GObject(columnList, bounds);
 	}
@@ -140,7 +140,7 @@ public class StoreAsGHdfs extends AbstractRecordSetConsumer
 		ArrayList<Pair<String, String>> cinfoList
 						= schema.streamColumns()
 								.map(col -> Pair.of(col.name(), GHdfsUtils.toGhdfsColumnType(col.type())))
-								.toList();
+								.toCollection(new ArrayList<>());
 		cinfoList.remove(geomCol.ordinal());
 		cinfoList.add(geomCol.ordinal(), Pair.of("shape", GHDFSColumnType.COLUMN_TYPE_BINARY));
 		gmeta.setColumnInfo(cinfoList, geomCol.ordinal());

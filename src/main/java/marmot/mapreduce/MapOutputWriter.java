@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 
 import com.google.common.base.Preconditions;
 
+import utils.KeyValue;
 import utils.StopWatch;
 import utils.func.FOption;
 
@@ -96,7 +97,7 @@ public class MapOutputWriter extends AbstractRecordSetConsumer
 			Map<String,Object> values = record.toMap();
 			Map<String,Object> reduced = record.getRecordSchema().streamColumns()
 												.filter(c -> !c.type().isGeometryType())
-												.mapToKeyValue(c -> c.name(), c -> values.get(c.name()))
+												.mapToKeyValue(c -> KeyValue.of(c.name(), values.get(c.name())))
 												.toMap();
 			
 			String msg = String.format("fails to write mapper output: record=%s, cause=%s",

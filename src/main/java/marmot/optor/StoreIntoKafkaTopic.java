@@ -96,7 +96,7 @@ public class StoreIntoKafkaTopic extends AbstractRecordSetConsumer
 											.map(r -> new ProducerRecord<>(m_topic, r));
 			sendInitialBlock(producer, records);
 			
-			records.buffer(BUFFER_SIZE, BUFFER_SIZE)
+			records.window(BUFFER_SIZE, BUFFER_SIZE)
 					.forEach(block -> {
 						sendBlock(producer, block);
 						m_count += block.size();
