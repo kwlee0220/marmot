@@ -21,7 +21,7 @@ import com.google.protobuf.InvalidProtocolBufferException;
 
 import utils.CSV;
 import utils.Preconditions;
-import utils.Utilities;
+import utils.KeyValue;
 import utils.func.CheckedFunctionX;
 import utils.func.Try;
 import utils.io.IOUtils;
@@ -467,7 +467,7 @@ public class MarmotAnalysisStore {
 				case MODULE:
 					String moduleId = rs.getString(3);
 					String moduleArgs = rs.getString(4);
-					Map<String,String> args = Utilities.parseKeyValueMap(moduleArgs, ';');
+					Map<String,String> args = KeyValue.parseMap(moduleArgs, ';');
 					return new ModuleAnalysis(id, moduleId, args);
 				case COMPOSITE:
 					String compCsv = rs.getString(3);
