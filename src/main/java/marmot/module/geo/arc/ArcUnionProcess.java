@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import utils.CSV;
-import utils.func.Optionals;
+import utils.func.Nullables;
 
 import marmot.Column;
 import marmot.MarmotCore;
@@ -53,9 +53,9 @@ public class ArcUnionProcess implements MarmotModule {
 		DataSet right = validateGeometry(m_marmot, m_params.getRightDataSet());
 		
 		StoreDataSetOptions opts = StoreDataSetOptions.GEOMETRY(left.getGeometryColumnInfo());
-		opts = Optionals.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
-		opts = Optionals.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
-		opts = Optionals.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
+		opts = Nullables.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
+		opts = Nullables.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
+		opts = Nullables.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
 		
 		String geomCol = left.getGeometryColumn();
 		String rightGeomCol = right.getGeometryColumn();
@@ -120,9 +120,9 @@ public class ArcUnionProcess implements MarmotModule {
 	
 	private void performLeftOuterJoin(DataSet left, DataSet right) {
 		StoreDataSetOptions opts = StoreDataSetOptions.GEOMETRY(left.getGeometryColumnInfo());
-		opts = Optionals.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
-		opts = Optionals.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
-		opts = Optionals.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
+		opts = Nullables.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
+		opts = Nullables.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
+		opts = Nullables.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
 		
 		String geomCol = left.getGeometryColumn();
 		ArcUnionPhase1Proto phase1 = ArcUnionPhase1Proto.newBuilder()

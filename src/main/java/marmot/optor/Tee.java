@@ -96,7 +96,7 @@ public class Tee extends AbstractRecordSetFunction implements PBSerializable<Tee
 					m_infoPath = HdfsPath.of(marmot.getHadoopFileSystem(), m_optor.m_infoPath);
 					FOption<Integer> ordinal = MarmotMRContexts.getTaskOrdinal();
 					if ( ordinal.isPresent() ) {
-						String taskId = "" + ordinal.getUnchecked();
+						String taskId = "" + ordinal.getOrNull();
 						
 						path = path.child(taskId);
 						m_infoPath = m_infoPath.child(taskId);

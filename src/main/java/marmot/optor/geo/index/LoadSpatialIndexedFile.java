@@ -207,7 +207,7 @@ public class LoadSpatialIndexedFile extends AbstractRecordSetLoader
 	public LoadSpatialClusteredFileProto toProto() {
 		LoadSpatialClusteredFileProto.Builder builder = LoadSpatialClusteredFileProto.newBuilder()
 																				.setDataset(m_dsId);
-		return m_range.transform(builder, (b,r) -> b.setRange(PBUtils.toProto(r))).build();
+		return m_range.fold(builder, (b,r) -> b.setRange(PBUtils.toProto(r))).build();
 	}
 	
 	private long calcTotalBytes(MarmotCore marmot) {

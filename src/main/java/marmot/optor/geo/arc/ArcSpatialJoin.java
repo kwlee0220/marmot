@@ -119,7 +119,7 @@ public class ArcSpatialJoin extends NestedLoopSpatialJoin<ArcSpatialJoin>
 			FOption<Record> inner;
 			while ( (inner = inners.next()).isPresent() ) {
 				if ( m_includeParamCols ) {
-					joineds.add(fillParamDataColumns(output.duplicate(), inner.getUnchecked()));
+					joineds.add(fillParamDataColumns(output.duplicate(), inner.getOrNull()));
 				}
 				++count;
 			}
@@ -133,7 +133,7 @@ public class ArcSpatialJoin extends NestedLoopSpatialJoin<ArcSpatialJoin>
 			FOption<Record> inner;
 			while ( (inner = inners.next()).isPresent() ) {
 				if ( count == 0 && m_includeParamCols ) {
-					fillParamDataColumns(output, inner.getUnchecked());
+					fillParamDataColumns(output, inner.getOrNull());
 				}
 				++count;
 			}

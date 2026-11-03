@@ -49,7 +49,7 @@ public class HadoopShutdownMain implements Runnable {
 	public void run() {
 		FOption.ofNullable(m_lock)
 				.map(File::new)
-				.orElse(() -> getHomeDir().map(dir -> new File(dir, ".lock")))
+				.or(() -> getHomeDir().map(dir -> new File(dir, ".lock")))
 				.ifPresent(UncheckedConsumer.sneakyThrow(this::touch));
 	}
 	
@@ -60,7 +60,7 @@ public class HadoopShutdownMain implements Runnable {
 	
 	private FOption<File> getHomeDir() {
 		return FOption.ofNullable(m_homeDir)
-						.orElse(() -> FOption.ofNullable(System.getenv("MARMOT_SERVER_HOME")))
+						.or(() -> FOption.ofNullable(System.getenv("MARMOT_SERVER_HOME")))
 						.map(File::new);
 	}
 }

@@ -74,7 +74,7 @@ public class QueryDataSet extends CompositeRecordSetLoader
 		
 		FOption<SpatialIndexInfo> oinfo = ds.getSpatialIndexInfo();
 		if ( !m_opts.negated().getOrElse(false) && oinfo.isPresent() ) {
-			return createForIndexedRangeQuery(m_marmot, ds, oinfo.getUnchecked());
+			return createForIndexedRangeQuery(m_marmot, ds, oinfo.getOrNull());
 		}
 		else {
 			return createForNonIndexRangeQuery(m_marmot, ds);

@@ -8,7 +8,6 @@ import com.google.common.collect.Maps;
 
 import utils.CSV;
 import utils.func.Either;
-import utils.func.Optionals;
 
 import marmot.MarmotCore;
 import marmot.Plan;
@@ -122,8 +121,8 @@ public class ClusterSpatially extends CompositeRecordSetConsumer
 															.setGeometryColumnInfo(m_gcInfo.toProto())
 															.setOptions(m_options.toProto());
 		
-		Optionals.transform(m_quadKeyInfo.left(), builder, (b,l) -> b.setQuadKeyList(l));
-		Optionals.transform(m_quadKeyInfo.right(), builder, (b,id) -> b.setQuadKeyDsId(id));
+		m_quadKeyInfo.left().fold(builder, (b,l) -> b.setQuadKeyList(l));
+		m_quadKeyInfo.right().fold(builder, (b,id) -> b.setQuadKeyDsId(id));
 		return builder.build();
 	}
 }

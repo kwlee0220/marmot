@@ -82,7 +82,7 @@ public class MarmotAnalysisManager {
 			case COMPOSITE:
 				CompositeExecution cexec = new CompositeExecution(this, (CompositeAnalysis)analysis);
 				m_registry.register(cexec);
-				CompletableFuture.supplyAsync(Try.lift(cexec));
+				CompletableFuture.supplyAsync(Try.liftRunnable(cexec));
 				return cexec;
 			case MODULE:
 				return start(analysis, () -> executeModuleAnalysis((ModuleAnalysis)analysis));
@@ -90,7 +90,7 @@ public class MarmotAnalysisManager {
 				return start(analysis, () -> m_sysAnalExector.execute((SystemAnalysis)analysis));
 			case EXTERN:
 				ExternExecution eexec = new ExternExecution((ExternAnalysis)analysis, m_executor);
-				CompletableFuture.supplyAsync(Try.lift(eexec));
+				CompletableFuture.supplyAsync(Try.liftRunnable(eexec));
 				m_registry.register(eexec);
 				return eexec;
 			default:

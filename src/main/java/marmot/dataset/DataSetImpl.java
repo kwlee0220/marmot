@@ -16,7 +16,7 @@ import utils.Preconditions;
 import utils.Throwables;
 import utils.UnitUtils;
 import utils.func.FOption;
-import utils.func.Optionals;
+import utils.func.Nullables;
 import utils.func.UncheckedFunction;
 import utils.stream.FStream;
 
@@ -358,10 +358,10 @@ public class DataSetImpl implements DataSet {
 	public void cluster(String outDsId, ClusterSpatiallyOptions opts) {
 		Iterable<String> qkList;
 		if ( opts.quadKeyList().isPresent() ) {
-			qkList = opts.quadKeyList().getUnchecked();
+			qkList = opts.quadKeyList().getOrNull();
 		}
 		else if ( opts.quadKeyDsId().isPresent() ) {
-			DataSetImpl qkDs = m_marmot.getDataSet( opts.quadKeyDsId().getUnchecked());
+			DataSetImpl qkDs = m_marmot.getDataSet( opts.quadKeyDsId().getOrNull());
 			qkList = qkDs.getClusterQuadKeyAll();
 		}
 		else {
@@ -414,15 +414,15 @@ public class DataSetImpl implements DataSet {
 	public RangeQueryEstimate estimateRangeQuery(Envelope range) {
 		Optional<CoordinateTransform> toWgs84 = Optional.ofNullable(getCoordinateTransform());
 		Optional<CoordinateTransform> fromWgs84 = Optional.ofNullable(m_rtrans);
-		Envelope rangeWgs84 = Optionals.transform(toWgs84, range, (r,t) -> t.transform(r));
+		Envelope rangeWgs84 = Nullables.transform(toWgs84, range, (r,t) -> t.transform(r));
 
 		QuadClusterFile<? extends QuadCluster> idxFile = loadOrBuildQuadClusterFile(m_marmot);
 		List<ClusterEstimate> clusterEstimates
 			= idxFile.queryClusters(rangeWgs84)
 						.map(cluster -> {
-							Envelope dataBounds = Optionals.transform(fromWgs84, cluster.getDataBounds(),
+							Envelope dataBounds = Nullables.transform(fromWgs84, cluster.getDataBounds(),
 																		(b,t) -> t.transform(b));
-							Envelope quadBounds = Optionals.transform(fromWgs84, cluster.getQuadBounds(),
+							Envelope quadBounds = Nullables.transform(fromWgs84, cluster.getQuadBounds(),
 																		(b,t) -> t.transform(b));
 							
 							Envelope clusterArea = quadBounds.intersection(dataBounds);
@@ -543,7 +543,7 @@ public class DataSetImpl implements DataSet {
 	
 	public Envelope toWgs84(Envelope range) {
 		FOption<CoordinateTransform> toWgs84 = FOption.ofNullable(getCoordinateTransform());
-		return toWgs84.transform(range, (r,t) -> t.transform(r));
+		return toWgs84.fold(range, (r,t) -> t.transform(r));
 	}
 	
 	/**

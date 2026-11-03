@@ -206,7 +206,7 @@ public class LoadSpatialClusterFile extends AbstractRecordSetLoader
 								= LoadSpatialClusterFileProto.newBuilder()
 															.setPath(m_scFile.getPath().toString())
 															.setOptions(m_options.toProto());
-		builder = m_range.transform(builder, (b,r) -> b.setRange(PBUtils.toProto(r)));
+		builder = m_range.fold(builder, (b,r) -> b.setRange(PBUtils.toProto(r)));
 		return builder.build();
 	}
 	

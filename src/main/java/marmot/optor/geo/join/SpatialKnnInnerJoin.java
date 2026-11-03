@@ -78,7 +78,7 @@ public class SpatialKnnInnerJoin extends SpatialKnnJoin<SpatialKnnInnerJoin>
 										.setParamDataset(getParamDataSetId())
 										.setRadius(getRadius())
 										.setOptions(m_options.toProto());
-		builder = getTopK().transform(builder, (b,k) -> b.setTopK(k));
+		builder = getTopK().fold(builder, (b,k) -> b.setTopK(k));
 		return builder.build();
 	}
 }

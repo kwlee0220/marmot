@@ -85,7 +85,7 @@ public class PBMarmotServerMain extends MarmotServerCommand {
 		System.out.printf("started: MarmotServer[host=%s, port=%d]%n", host, port);
 
 		getTerminationLockFile()
-			.orElse(() -> getHomeDir().map(dir -> new File(dir, ".lock")))
+			.or(() -> getHomeDir().map(dir -> new File(dir, ".lock")))
 			.ifPresent(lock -> {
 				s_logger.info("monitor the termination_lock: {}", lock.getAbsolutePath());
 				runAsync(UncheckedRunnable.sneakyThrow(() -> awaitTermination(server, lock)));

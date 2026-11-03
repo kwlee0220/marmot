@@ -84,7 +84,7 @@ public class InputSplitStore {
 											.findFirst();
 				
 				if ( osplit.isPresent() ) {
-					Tuple<Integer,InputSplit> tuple = osplit.getUnchecked();
+					Tuple<Integer,InputSplit> tuple = osplit.getOrNull();
 					
 					PreparedStatement pstmt = conn.prepareStatement(SQL_DELETE_INPUT_SPLIT);
 					pstmt.setString(1, jobId);

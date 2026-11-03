@@ -121,7 +121,7 @@ class FixedMapperRecordReader extends RecordReader<NullWritable, RecordWritable>
 				return null;
 			}
 			
-			m_split = osplit.getUnchecked()._2;
+			m_split = osplit.getOrNull()._2;
 			
 			// End-Of-Split 인가 확인한다.
 			if ( m_split.getLength() < 0 ) {
@@ -129,7 +129,7 @@ class FixedMapperRecordReader extends RecordReader<NullWritable, RecordWritable>
 				return null;
 			}
 			
-			m_seqNo = osplit.getUnchecked()._1;
+			m_seqNo = osplit.getOrNull()._1;
 			
 			RecordReader<NullWritable, RecordWritable> reader
 													= m_format.createRecordReader(m_split, m_context);

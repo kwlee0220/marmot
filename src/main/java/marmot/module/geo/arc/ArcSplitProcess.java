@@ -3,7 +3,7 @@ package marmot.module.geo.arc;
 import java.util.List;
 import java.util.Map;
 
-import utils.func.Optionals;
+import utils.func.Nullables;
 
 import marmot.MarmotCore;
 import marmot.Plan;
@@ -54,9 +54,9 @@ public class ArcSplitProcess implements MarmotModule {
 		String splitKey = m_params.getSplitKey();
 		
 		StoreDataSetOptions opts = StoreDataSetOptions.DEFAULT;
-		opts = Optionals.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
-		opts = Optionals.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
-		opts = Optionals.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
+		opts = Nullables.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
+		opts = Nullables.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
+		opts = Nullables.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
 
 		DataSet input = m_marmot.getDataSet(m_params.getInputDataset());
 		if ( input.hasGeometryColumn() ) {

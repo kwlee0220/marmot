@@ -103,7 +103,7 @@ class MapReduceStage extends Stage implements CancellableWork {
 						s_logger.info("cancelled the stage: {}:{} cause={}",
 										m_context.m_stageId, toShortString(), cause);
 					})
-					.ifNone(() -> {
+					.ifCancelled(() -> {
 						s_logger.info("cancelled the stage: {}:{} (elapsed={})",
 								m_context.m_stageId, toShortString(), m_watch.stopAndGetElpasedTimeString());
 					});

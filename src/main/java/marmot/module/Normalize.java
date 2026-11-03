@@ -89,7 +89,7 @@ public class Normalize implements MarmotModule {
 				invalidCols.add(colName);
 			}
 			else {
-				DataType type = col.getUnchecked().type();
+				DataType type = col.getOrNull().type();
 				switch ( type.getTypeCode() ) {
 					case DOUBLE: case LONG: case INT: case FLOAT: case SHORT: case BYTE:
 						break;

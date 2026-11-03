@@ -485,7 +485,7 @@ public class PBPlanExecutionServiceServant extends PlanExecutionServiceImplBase 
 												.setRetentionTime(exec.getRetentionTime().toMillis())
 												.setExecStateInfo(stateInfoProto)
 												.setCurrentExecIndex(current);
-		builder = exec.getMarmotAnalysis().transform(builder, (b,a) -> b.setAnalysisId(a.getId()));
+		builder = exec.getMarmotAnalysis().fold(builder, (b,a) -> b.setAnalysisId(a.getId()));
 		return builder.build();
 	}
 	

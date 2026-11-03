@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.UUID;
 
 import utils.UnitUtils;
-import utils.func.Optionals;
+import utils.func.Nullables;
 
 import marmot.MarmotCore;
 import marmot.Plan;
@@ -60,9 +60,9 @@ public class ArcBufferProcess implements MarmotModule {
 		GeometryColumnInfo gcInfo = m_marmot.getDataSet(m_params.getInputDataset())
 											.getGeometryColumnInfo();
 		StoreDataSetOptions opts = StoreDataSetOptions.GEOMETRY(gcInfo);
-		opts = Optionals.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
-		opts = Optionals.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
-		opts = Optionals.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
+		opts = Nullables.transform(m_params.getForce(), opts, StoreDataSetOptions::force);
+		opts = Nullables.transform(m_params.getCompressionCodecName(), opts, StoreDataSetOptions::compressionCodecName);
+		opts = Nullables.transform(m_params.getBlockSize(), opts, StoreDataSetOptions::blockSize);
 		
 		if ( !m_params.getDissolve() ) {
 			builder.store(m_params.getOutputDataset(), opts);

@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import utils.Tuple;
 import utils.Tuple4;
-import utils.func.FOption;
+import utils.func.Nullables;
 import utils.stream.FStream;
 import utils.stream.KeyedGroups;
 
@@ -94,7 +94,7 @@ public class SpatialIndexJoinFileFormat extends FileInputFormat<NullWritable, Re
 	}
 	
 	public static boolean getIsExistsMatcher(Configuration conf) {
-		return FOption.map(conf.get(PROP_IS_EXISTS_MATCHER),
+		return Nullables.map(conf.get(PROP_IS_EXISTS_MATCHER),
 							str -> Boolean.parseBoolean(str));
 	}
 	

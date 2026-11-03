@@ -81,7 +81,7 @@ public class MarmotServerCommand implements PicocliCommand {
 	
 	public FOption<File> getHomeDir() {
 		return FOption.ofNullable(m_homeDir)
-						.orElse(() -> FOption.ofNullable(System.getenv("MARMOT_SERVER_HOME")))
+						.or(() -> FOption.ofNullable(System.getenv("MARMOT_SERVER_HOME")))
 						.map(File::new);
 	}
 	

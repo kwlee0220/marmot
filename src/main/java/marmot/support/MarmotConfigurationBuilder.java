@@ -95,7 +95,7 @@ public class MarmotConfigurationBuilder {
 	
 	private InputStream readMarmotResource(String name) throws FileNotFoundException {
 		if ( m_configDir.isPresent() ) {
-			return new FileInputStream(new File(m_configDir.getUnchecked(), name));
+			return new FileInputStream(new File(m_configDir.getOrNull(), name));
 		}
 		else {
 			name = String.format("%s/%s", HADOOP_CONFIG, name);
